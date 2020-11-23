@@ -5,13 +5,13 @@ module.exports = {
     node: true,
   },
   extends: [
-    'plugin:react/recommended',
-    'airbnb',
+    'airbnb-typescript-prettier',
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaFeatures: {
       jsx: true,
+      modules: true
     },
     ecmaVersion: 12,
     sourceType: 'module',
@@ -20,6 +20,8 @@ module.exports = {
     'react',
     '@typescript-eslint',
   ],
-  rules: {
+  rules:  {
+    'react/jsx-filename-extension': [2, { 'extensions': ['.js', '.jsx', '.ts', '.tsx'] }],
+  
   },
 };
