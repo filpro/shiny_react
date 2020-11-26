@@ -1,26 +1,62 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useState, useEffect } from 'react';
 import './App.css';
+import Card from '@material-ui/core/Card/Card';
+import { hot } from 'react-hot-loader';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+declare let window: IWindow
+
+interface Shiny {
+  addCustomMessageHandler(name: string, callback: (n: any) => any): void
+  setInputValue(name: string, obj: any): void
 }
 
-export default App;
+
+interface IWindow extends Window {
+  Shiny: Shiny
+}
+
+class App extends React.Component<unknown, unknown> {
+
+  constructor(props: any) {
+    super(props)
+  }
+
+  componentDidMount() {
+    // eslint-disable-next-line no-undef
+    //$(document).on('shiny:connected', () => {
+      //this.setInputValues()
+    //})
+    $(document).on('shiny:connected', () => {
+      this.setInputValues()
+    })
+
+    window.Shiny.addCustomMessageHandler('test', (data) => {
+      console.log(data);
+    })
+    
+  
+  }
+
+  componentDidUpdate() {
+    this.setInputValues()
+  }
+
+  setInputValues() {
+    window.Shiny.setInputValue('bins', Date())
+  }
+
+
+  render() {
+    return (
+      <div className="App">
+        <header className="App-header">
+          <Card>
+            Dupaaaa!
+        </Card>
+        </header>
+      </div>
+    );
+  }
+}
+
+export default hot(module)(App);

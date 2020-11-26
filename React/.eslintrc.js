@@ -4,9 +4,6 @@ module.exports = {
     es2021: true,
     node: true,
   },
-  extends: [
-    'airbnb-typescript-prettier',
-  ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaFeatures: {
