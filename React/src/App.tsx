@@ -1,62 +1,54 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import './App.css';
 import Card from '@material-ui/core/Card/Card';
 import { hot } from 'react-hot-loader';
+import { CardContent, Typography, CardActions, Button } from '@material-ui/core';
+import IWindow from './utils/IWindow';
 
-declare let window: IWindow
+declare let window: IWindow;
 
-interface Shiny {
-  addCustomMessageHandler(name: string, callback: (n: any) => any): void
-  setInputValue(name: string, obj: any): void
+interface IState {
+    apiUrl: string;
 }
 
+class App extends React.Component<unknown, IState> {
+    constructor(props: any) {
+        super(props);
+        this.state = {
+            apiUrl: '',
+        };
+    }
 
-interface IWindow extends Window {
-  Shiny: Shiny
-}
+    componentDidMount() {
+        window.Shiny.addCustomMessageHandler('test', (data: any) => {
+            console.log(data);
+        });
 
-class App extends React.Component<unknown, unknown> {
+        window.Shiny.addCustomMessageHandler('urlPath', (url: string) => {
+            this.setState({ apiUrl: url });
+        });
 
-  constructor(props: any) {
-    super(props)
-  }
+        $(document).on('shiny:connected', () => console.log(`Session initialized: ${Date()}`));
+    }
 
-  componentDidMount() {
-    // eslint-disable-next-line no-undef
-    //$(document).on('shiny:connected', () => {
-      //this.setInputValues()
-    //})
-    $(document).on('shiny:connected', () => {
-      this.setInputValues()
-    })
-
-    window.Shiny.addCustomMessageHandler('test', (data) => {
-      console.log(data);
-    })
-    
-  
-  }
-
-  componentDidUpdate() {
-    this.setInputValues()
-  }
-
-  setInputValues() {
-    window.Shiny.setInputValue('bins', Date())
-  }
-
-
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <Card>
-            Dupaaaa!
-        </Card>
-        </header>
-      </div>
-    );
-  }
+    render() {
+        return (
+            <div className="App">
+                <header className="App-header">
+                    <Card>
+                        <CardContent>
+                            <Typography color="textSecondary" gutterBottom>
+                                Get an API: {this.state.apiUrl}
+                            </Typography>
+                        </CardContent>
+                        <CardActions>
+                            <Button size="small">Learn More</Button>
+                        </CardActions>
+                    </Card>
+                </header>
+            </div>
+        );
+    }
 }
 
 export default hot(module)(App);

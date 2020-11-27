@@ -1,25 +1,20 @@
-#
-# This is a Shiny web application. You can run the application by clicking
-# the 'Run App' button above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
-#
-
 library(shiny)
 
-# Define UI for application that draws a histogram
+#Development mode
+source('main.R')
+
+
 ui <- function() {
   htmlTemplate("../React/public/index.html")
 }
 
-# Define server logic required to draw a histogram
+
 server <- function(input, output, session) {
 
   observeEvent(input$call, {
     print('The call has been made!')
     session$sendCustomMessage("test", mtcars)
+    session$sendCustomMessage("urlPath", pathUrl)
   })
 
   pathUrl = session$registerDataObj(
@@ -32,6 +27,7 @@ server <- function(input, output, session) {
       )
     }
   )
+  session$sendCustomMessage("urlPath", pathUrl)
   print(pathUrl)
 
 }
