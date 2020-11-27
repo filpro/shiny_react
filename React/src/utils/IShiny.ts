@@ -1,4 +1,4 @@
 export default interface IShiny {
-    addCustomMessageHandler(name: string, callback: (n: any) => any): void;
-    setInputValue(name: string, obj: any): void;
+    addCustomMessageHandler<T>(name: string, callback: (n: T) => void): void;
+    setInputValue<T>(name: string, obj: T): void;
 }

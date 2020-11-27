@@ -1,5 +1,6 @@
 library(shiny)
-
+library(magrittr)
+library(jsonlite)
 #Development mode
 source('main.R')
 
@@ -11,17 +12,22 @@ ui <- function() {
 
 server <- function(input, output, session) {
 
+  modMtcars = mtcars
+  modMtcars = cbind(name = rownames(modMtcars), modMtcars)
+  rownames(modMtcars) <- NULL
+  outputMtcars = modMtcars  %>% toJSON()
+
   observeEvent(input$call, {
     print('The call has been made!')
-    session$sendCustomMessage("test", mtcars)
+    session$sendCustomMessage("test", outputMtcars)
     session$sendCustomMessage("urlPath", pathUrl)
   })
 
   pathUrl = session$registerDataObj(
     name = 'data-api',
-    data = mtcars,
+    data = outputMtcars,
     filter = function(data, req) {
-      outputData = jsonlite::toJSON(data)
+      outputData = data
       shiny:::httpResponse(
         200, 'application/json', outputData
       )

@@ -12,7 +12,7 @@
       "modules": true
     },
     "project": "tsconfig.json",
-    "tsconfigRootDir": "__dirname",
+    "tsconfigRootDir": "React",
     "ecmaVersion": 12,
     "sourceType": "module"
   },
