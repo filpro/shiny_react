@@ -34,6 +34,7 @@ server <- function(input, output, session) {
     }
   )
   session$sendCustomMessage("urlPath", pathUrl)
+  session$sendCustomMessage("test", outputMtcars)
   print(pathUrl)
 
 }
