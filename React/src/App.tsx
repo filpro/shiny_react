@@ -7,6 +7,7 @@ import IWindow from './utils/IWindow';
 import Mtcars from './models/Mtcars';
 import DenseTable from './components/Mytable';
 import Sidebar from './components/Sidebar/Sidebar';
+import Valueinfo from './components/Valueinfo/Valueinfo';
 
 declare let window: IWindow;
 
@@ -27,9 +28,12 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const App: React.FC = (): JSX.Element => {
     const [apiUrl, setApiUrl] = useState('session has not been initialized yet');
+    const [valApiUrl, setValApiUrl] = useState('');
     const [mtcars, setMtcars] = useState<Mtcars[]>([]);
     const [learnMore, setLearnMore] = useState(true);
     const [seconds, setSeconds] = useState(0);
+    const [value, setValue] = useState(0);
+
     const classes = useStyles();
 
     useEffect(() => {
@@ -41,6 +45,11 @@ const App: React.FC = (): JSX.Element => {
             setApiUrl(url);
         });
 
+        window.Shiny.addCustomMessageHandler<string>('valUrlPath', (url: string) => {
+            console.log(url);
+            setValApiUrl(url);
+        });
+
         window.Shiny.addCustomMessageHandler<number>('sessionDuration', (seconds: number) => {
             setSeconds(seconds);
         });
@@ -50,7 +59,10 @@ const App: React.FC = (): JSX.Element => {
         });
     });
 
-
+    const handleClickRandom = async () => {
+        const result: number = await fetch(valApiUrl).then(response => response.json());
+        setValue(result)
+    }
 
     let table: JSX.Element;
     if (learnMore) {
@@ -67,9 +79,13 @@ const App: React.FC = (): JSX.Element => {
                         <Paper className={classes.paper}>
                             <Grid item>
                                 <Typography color="textSecondary" gutterBottom>
-                                    Get an API: {apiUrl} + ' ' + {seconds}
+                                    {`Get an API: ${apiUrl} - ${seconds} - ${value}`}
+                                </Typography>
+                                <Typography color="textSecondary" gutterBottom>
+                                    {`Get an API: ${valApiUrl} - ${seconds} - ${value}`}
                                 </Typography>
                                 <Button size="small" onClick={() => setLearnMore(!learnMore)}>Learn more</Button>
+                                <Button size="small" onClick={() => handleClickRandom()}>Get random</Button>
                             </Grid>
                         </Paper>
                         <Paper className={classes.paper}>
