@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
-import Card from '@material-ui/core/Card/Card';
 import { hot } from 'react-hot-loader';
-import { CardContent, Typography, CardActions, Button, Grid, createStyles, makeStyles, Theme, Container, Paper } from '@material-ui/core';
+import {Typography, Button, Grid, createStyles, makeStyles, Theme, Container, Paper } from '@material-ui/core';
 import IWindow from './utils/IWindow';
 import Mtcars from './models/Mtcars';
 import DenseTable from './components/Mytable';
 import Sidebar from './components/Sidebar/Sidebar';
-import Valueinfo from './components/Valueinfo/Valueinfo';
+
 
 declare let window: IWindow;
 
