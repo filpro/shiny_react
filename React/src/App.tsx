@@ -13,6 +13,7 @@ const App: React.FC = (): JSX.Element => {
     const [apiUrl, setApiUrl] = useState('session has not been initialized yet');
     const [mtcars, setMtcars] = useState<Mtcars[]>([]);
     const [learnMore, setLearnMore] = useState(true);
+    const [seconds, setSeconds] = useState(0);
 
     useEffect(() => {
         window.Shiny.addCustomMessageHandler<Mtcars[]>('test', (data: Mtcars[]) => {
@@ -23,8 +24,16 @@ const App: React.FC = (): JSX.Element => {
             setApiUrl(url);
         });
 
-        $(document).on('shiny:connected', () => console.log(`Session initialized: ${Date()}`));
+        window.Shiny.addCustomMessageHandler<number>('sessionDuration', (seconds: number) => {
+            setSeconds(seconds);
+        });
+
+        $(document).on('shiny:connected', () => {
+            console.log(`Session initialized: ${Date()}`)
+        });
     });
+
+
 
     let table: JSX.Element;
     if (learnMore) {
@@ -39,8 +48,9 @@ const App: React.FC = (): JSX.Element => {
                 <Card>
                     <CardContent>
                         <Typography color="textSecondary" gutterBottom>
-                            Get an API: {apiUrl}
+                            Get an API: {apiUrl} + ' ' + {seconds}
                         </Typography>
+                        
                     </CardContent>
                     <CardActions>
                         <Button size="small" onClick={() => setLearnMore(!learnMore)}>

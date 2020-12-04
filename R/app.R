@@ -2,13 +2,12 @@ library(shiny)
 library(magrittr)
 library(jsonlite)
 #Development mode
-source('main.R')
+#source('main.R')
 
 
 ui <- function() {
   htmlTemplate("../React/public/index.html")
 }
-
 
 server <- function(input, output, session) {
 
@@ -36,6 +35,22 @@ server <- function(input, output, session) {
   session$sendCustomMessage("urlPath", pathUrl)
   session$sendCustomMessage("test", outputMtcars)
   print(pathUrl)
+
+
+
+# Cloudflare related - to keep session alive >100 seconds
+  autoInvalidate <- reactiveTimer(90000)
+  seconds = 0
+
+  observeEvent(autoInvalidate(), {
+    # Invalidate and re-execute this reactive expression every time the
+    # timer fires.
+    seconds <<- seconds + 90
+    # Do something each time this is invalidated.
+    # The isolate() makes this observer _not_ get invalidated and re-executed
+    # when input$n changes.
+    session$sendCustomMessage("sessionDuration", seconds)
+  }, ignoreInit=TRUE)
 
 }
 
