@@ -26,7 +26,7 @@ server <- function(input, output, session) {
     name = 'data-api',
     data = outputMtcars,
     filter = function(data, req) {
-      outputData = data
+      outputData = data 
       shiny:::httpResponse(
         200, 'application/json', outputData
       )
@@ -36,6 +36,17 @@ server <- function(input, output, session) {
   session$sendCustomMessage("test", outputMtcars)
   print(pathUrl)
 
+    pathValueUrl = session$registerDataObj(
+    name = 'api',
+    data = list(),
+    filter = function(data, req) {
+      outputData = rnorm(1) %>% toJSON()
+      shiny:::httpResponse(
+        200, 'application/json', outputData
+      )
+    }
+  )
+  session$sendCustomMessage("valUrlPath", pathValueUrl)
 
 
 # Cloudflare related - to keep session alive >100 seconds
