@@ -14,6 +14,7 @@ import MailIcon from '@material-ui/icons/Mail';
 import MenuIcon from '@material-ui/icons/Menu';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
+import { Link } from "react-router-dom";
 import { makeStyles, useTheme, Theme, createStyles } from '@material-ui/core/styles';
 
 const drawerWidth = 240;
@@ -55,8 +56,8 @@ const useStyles = makeStyles((theme: Theme) =>
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-        }
-    }),
+        },
+    })
 );
 
 interface Props {
@@ -67,9 +68,6 @@ interface Props {
     window?: () => Window;
     children: JSX.Element;
 }
-
-
-
 
 export default function Sidebar(props: Props) {
     const { window } = props;
@@ -86,26 +84,22 @@ export default function Sidebar(props: Props) {
             <div className={`${classes.toolbar} ${classes.applogo}`}>
                 <Typography variant="h6" noWrap>
                     Shiny React App
-          </Typography>
+                </Typography>
             </div>
             <Divider />
             <List>
-                {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-                    <ListItem button key={text}>
-                        <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                        <ListItemText primary={text} />
-                    </ListItem>
-                ))}
+                {[
+                    { label: 'Dashboard', link: '/dashboard' },
+                    { label: 'Transakcje', link: '/transactions' },
+                    { label: 'Wyszukaj', link: '/search' },
+                    { label: 'Statystyki', link: '/statistics' }].map((text, index) => (
+                        <ListItem button key={text.link}>
+                            <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+                            <ListItemText primary={<Link to={text.link}>{text.label}</Link>} />
+                        </ListItem>
+                    ))}
             </List>
             <Divider />
-            <List>
-                {['All mail', 'Trash', 'Spam'].map((text, index) => (
-                    <ListItem button key={text}>
-                        <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-                        <ListItemText primary={text} />
-                    </ListItem>
-                ))}
-            </List>
         </div>
     );
 
@@ -116,18 +110,12 @@ export default function Sidebar(props: Props) {
             <CssBaseline />
             <AppBar position="fixed" className={classes.appBar}>
                 <Toolbar disableGutters={false}>
-                    <IconButton
-                        color="inherit"
-                        aria-label="open drawer"
-                        edge="start"
-                        onClick={handleDrawerToggle}
-                        className={classes.menuButton}
-                    >
+                    <IconButton color="inherit" aria-label="open drawer" edge="start" onClick={handleDrawerToggle} className={classes.menuButton}>
                         <MenuIcon />
                     </IconButton>
                     <Typography variant="h6" noWrap>
                         Responsive drawer
-          </Typography>
+                    </Typography>
                 </Toolbar>
             </AppBar>
             <nav className={classes.drawer} aria-label="mailbox folders">

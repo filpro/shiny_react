@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
 import { hot } from 'react-hot-loader';
-import {Typography, Button, Grid, createStyles, makeStyles, Theme, Container, Paper } from '@material-ui/core';
+import { Typography, Button, Grid, createStyles, makeStyles, Theme, Container, Paper } from '@material-ui/core';
 import IWindow from './utils/IWindow';
 import Mtcars from './models/Mtcars';
 import DenseTable from './components/Mytable';
 import Sidebar from './components/Sidebar/Sidebar';
-
+import AppRouter from './components/Router/AppRouter'
+import {BrowserRouter as Router} from 'react-router-dom';
 
 declare let window: IWindow;
 
@@ -14,16 +15,15 @@ const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         gridcontainer: {
             maxWidth: window.innerWidth * 0.93,
-            wordWrap: "break-word",
-            gridGap: theme.spacing(3)
+            wordWrap: 'break-word',
+            gridGap: theme.spacing(3),
         },
         paper: {
             margin: `${theme.spacing(2)}px auto`,
-            padding: theme.spacing(2)
-        }
+            padding: theme.spacing(2),
+        },
     })
-)
-
+);
 
 const App: React.FC = (): JSX.Element => {
     const [apiUrl, setApiUrl] = useState('session has not been initialized yet');
@@ -49,19 +49,19 @@ const App: React.FC = (): JSX.Element => {
             setValApiUrl(url);
         });
 
-        window.Shiny.addCustomMessageHandler<number>('sessionDuration', (seconds: number) => {
-            setSeconds(seconds);
+        window.Shiny.addCustomMessageHandler<number>('sessionDuration', (duration: number) => {
+            setSeconds(duration);
         });
 
         $(document).on('shiny:connected', () => {
-            console.log(`Session initialized: ${Date()}`)
+            console.log(`Session initialized: ${Date()}`);
         });
     });
 
     const handleClickRandom = async () => {
-        const result: number = await fetch(valApiUrl).then(response => response.json());
-        setValue(result)
-    }
+        const result: number = await fetch(valApiUrl).then((response) => response.json());
+        setValue(result);
+    };
 
     let table: JSX.Element;
     if (learnMore) {
@@ -78,13 +78,17 @@ const App: React.FC = (): JSX.Element => {
                         <Paper className={classes.paper}>
                             <Grid item>
                                 <Typography color="textSecondary" gutterBottom>
-                                    {`Get an API: ${apiUrl} - ${seconds} - ${value}`}
+                                    {`Geets an API: ${apiUrl} - ${seconds} - ${value}`}
                                 </Typography>
                                 <Typography color="textSecondary" gutterBottom>
                                     {`Get an API: ${valApiUrl} - ${seconds} - ${value}`}
                                 </Typography>
-                                <Button size="small" onClick={() => setLearnMore(!learnMore)}>Learn more</Button>
-                                <Button size="small" onClick={() => handleClickRandom()}>Get random</Button>
+                                <Button size="small" onClick={() => setLearnMore(!learnMore)}>
+                                    Learn more
+                                </Button>
+                                <Button size="small" onClick={() => handleClickRandom()}>
+                                    Get random
+                                </Button>
                             </Grid>
                         </Paper>
                         <Paper className={classes.paper}>
@@ -92,10 +96,15 @@ const App: React.FC = (): JSX.Element => {
                                 {table}
                             </Grid>
                         </Paper>
+                        <Paper className={classes.paper}>
+                            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                                <AppRouter/>
+                            </Grid>
+                        </Paper>
                     </Container>
                 </Sidebar>
             </header>
-        </div >
+        </div>
     );
 };
 

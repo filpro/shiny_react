@@ -11,8 +11,8 @@
       "jsx": true,
       "modules": true
     },
-    "project": "tsconfig.json",
-    "tsconfigRootDir": "React",
+    "project": "./tsconfig.json",
+    "tsconfigRootDir": ".",
     "ecmaVersion": 12,
     "sourceType": "module"
   },
