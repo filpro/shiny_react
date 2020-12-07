@@ -1,11 +1,12 @@
-import React from 'react'
+import React from 'react';
+import TransactionForm from '../../components/TransactionForm/TransactionForm';
 
 const TransactionsPage: React.FC = (): JSX.Element => {
     return (
         <div>
-            Transactions
+            <TransactionForm />
         </div>
-    )
-}
+    );
+};
 
 export default TransactionsPage;

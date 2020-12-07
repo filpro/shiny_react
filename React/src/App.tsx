@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
 import { hot } from 'react-hot-loader';
-import { Typography, Button, Grid, createStyles, makeStyles, Theme, Container, Paper } from '@material-ui/core';
+import { Grid, createStyles, makeStyles, Theme, Container, Paper } from '@material-ui/core';
 import IWindow from './utils/IWindow';
 import Mtcars from './models/Mtcars';
-import DenseTable from './components/Mytable';
 import Sidebar from './components/Sidebar/Sidebar';
-import AppRouter from './components/Router/AppRouter'
-import {BrowserRouter as Router} from 'react-router-dom';
+import AppRouter from './components/Router/AppRouter';
+import ShinyContext from './context/ShinyContext';
 
 declare let window: IWindow;
 
@@ -29,7 +28,6 @@ const App: React.FC = (): JSX.Element => {
     const [apiUrl, setApiUrl] = useState('session has not been initialized yet');
     const [valApiUrl, setValApiUrl] = useState('');
     const [mtcars, setMtcars] = useState<Mtcars[]>([]);
-    const [learnMore, setLearnMore] = useState(true);
     const [seconds, setSeconds] = useState(0);
     const [value, setValue] = useState(0);
 
@@ -63,46 +61,29 @@ const App: React.FC = (): JSX.Element => {
         setValue(result);
     };
 
-    let table: JSX.Element;
-    if (learnMore) {
-        table = <DenseTable data={mtcars} />;
-    } else {
-        table = <></>;
-    }
+    const contextValue = {
+        apiUrl,
+        valApiUrl,
+        seconds,
+        value,
+        mtcars,
+        handleClickRandom,
+    };
 
     return (
         <div className="App">
             <header className="App-header">
-                <Sidebar>
-                    <Container className={classes.gridcontainer}>
-                        <Paper className={classes.paper}>
-                            <Grid item>
-                                <Typography color="textSecondary" gutterBottom>
-                                    {`Geets an API: ${apiUrl} - ${seconds} - ${value}`}
-                                </Typography>
-                                <Typography color="textSecondary" gutterBottom>
-                                    {`Get an API: ${valApiUrl} - ${seconds} - ${value}`}
-                                </Typography>
-                                <Button size="small" onClick={() => setLearnMore(!learnMore)}>
-                                    Learn more
-                                </Button>
-                                <Button size="small" onClick={() => handleClickRandom()}>
-                                    Get random
-                                </Button>
-                            </Grid>
-                        </Paper>
-                        <Paper className={classes.paper}>
-                            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                                {table}
-                            </Grid>
-                        </Paper>
-                        <Paper className={classes.paper}>
-                            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                                <AppRouter/>
-                            </Grid>
-                        </Paper>
-                    </Container>
-                </Sidebar>
+                <ShinyContext.Provider value={contextValue}>
+                    <Sidebar>
+                        <Container className={classes.gridcontainer}>
+                            <Paper className={classes.paper}>
+                                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                                    <AppRouter />
+                                </Grid>
+                            </Paper>
+                        </Container>
+                    </Sidebar>
+                </ShinyContext.Provider>
             </header>
         </div>
     );

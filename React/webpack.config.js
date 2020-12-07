@@ -1,9 +1,11 @@
 const webpack = require('webpack')
+const path = require('path');
 
 module.exports = {
   output: {
     // Serve the bundle from /static
-    publicPath: '/static/'
+    publicPath: '/static/',
+    path: path.join(__dirname, ''),
   },
   resolve: {
     extensions: ['.ts', '.tsx', '.js']
@@ -68,6 +70,10 @@ module.exports = {
     host: '0.0.0.0',
     disableHostCheck: true,
     public: 'vsc.filpro.io',
+    historyApiFallback: {
+      disableDotRule: true,
+      index: path.publicUrlOrPath,
+    },
     // Proxy everything besides the bundle to Shiny
     proxy: {
       '/': {

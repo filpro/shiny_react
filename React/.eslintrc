@@ -11,8 +11,8 @@
       "jsx": true,
       "modules": true
     },
-    "project": "./tsconfig.json",
-    "tsconfigRootDir": ".",
+    "project": "tsconfig.json",
+    "tsconfigRootDir": "/shiny_react/React",
     "ecmaVersion": 12,
     "sourceType": "module"
   },
