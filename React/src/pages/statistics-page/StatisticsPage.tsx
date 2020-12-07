@@ -12,7 +12,7 @@ const StatisticsPage: React.FC = (): JSX.Element => {
             <Typography color="textSecondary" gutterBottom>
                 {`Get an API: ${valApiUrl} - ${seconds} - ${value}`}
             </Typography>
-            <Button size="small" onClick={() => handleClickRandom()}>
+            <Button size="small" onClick={() => handleClickRandom!()}>
                 Get random
             </Button>
         </Grid>

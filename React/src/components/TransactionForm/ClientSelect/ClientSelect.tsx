@@ -3,37 +3,7 @@ import React from 'react';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { Button, Divider } from '@material-ui/core';
-
-const ClientSelect: React.FC = (): JSX.Element => {
-    return (
-        <Autocomplete
-            size="small"
-            id="combo-box-demo"
-            options={top100Films}
-            getOptionLabel={(option) => option.title}
-            renderInput={(params) => <TextField {...params} label="Nazwa klienta" fullWidth />}
-            renderOption={(option) => {
-                return (
-                    <>
-                        <div>
-                            {option.title}
-                            <Divider />
-                        </div>
-                        ;
-                    </>
-                );
-            }}
-            noOptionsText={<Button onMouseDown={() => console.log('event')}>Dodaj nowego klienta</Button>}
-            ListboxProps={{
-                style: {
-                    maxHeight: '150px',
-                    border: '1px solid black',
-                    fontSize: 'small',
-                },
-            }}
-        />
-    );
-};
+import ClientAdder from './ClientAdder/ClientAdder';
 
 // Top 100 films as rated by IMDb users. http://www.imdb.com/chart/top
 const top100Films = [
@@ -138,5 +108,44 @@ const top100Films = [
     { title: '3 Idiots', year: 2009 },
     { title: 'Monty Python and the Holy Grail', year: 1975 },
 ];
+
+const ClientSelect: React.FC = (): JSX.Element => {
+    const [open, setOpen] = React.useState(false);
+
+    const newClientHandler = (): void => {
+        setOpen(true);
+    };
+
+    return (
+        <div>
+            <ClientAdder open={open} setOpen={setOpen} />
+            <Autocomplete
+                size="small"
+                id="combo-box-demo"
+                options={top100Films}
+                getOptionLabel={(option) => option.title}
+                renderInput={(params) => <TextField {...params} label="Nazwa klienta" fullWidth />}
+                renderOption={(option) => {
+                    return (
+                        <>
+                            <div>
+                                {option.title}
+                                <Divider />
+                            </div>
+                        </>
+                    );
+                }}
+                noOptionsText={<Button onMouseDown={() => newClientHandler()}>Dodaj nowego klienta</Button>}
+                ListboxProps={{
+                    style: {
+                        maxHeight: '150px',
+                        border: '1px solid black',
+                        fontSize: 'small',
+                    },
+                }}
+            />
+        </div>
+    );
+};
 
 export default ClientSelect;

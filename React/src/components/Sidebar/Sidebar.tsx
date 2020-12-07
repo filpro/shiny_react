@@ -9,8 +9,10 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import MailIcon from '@material-ui/icons/Mail';
 import MenuIcon from '@material-ui/icons/Menu';
+import DataUsageIcon from '@material-ui/icons/DataUsage';
+import SearchIcon from '@material-ui/icons/Search';
+import AddBoxIcon from '@material-ui/icons/AddBox';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import { Link } from 'react-router-dom';
@@ -64,6 +66,7 @@ interface Props {
      * Injected by the documentation to work in an iframe.
      * You won't need it on your project.
      */
+    // eslint-disable-next-line react/require-default-props
     window?: () => Window;
     children: JSX.Element;
 }
@@ -71,16 +74,16 @@ interface Props {
 export default function Sidebar(props: Props) {
     const { window } = props;
     const classes = useStyles();
-    const theme = useTheme();
     const [mobileOpen, setMobileOpen] = React.useState(false);
 
-    const handleDrawerToggle = () => {
-        setMobileOpen(!mobileOpen);
+    const handleDrawerToggle = (open: boolean) => {
+        console.log(`SIDEBAR: ${open}`);
+        setMobileOpen(open);
     };
 
     const drawer = (
         <div>
-            <div className={`${classes.toolbar} ${classes.applogo}`}>
+            <div role="presentation" className={`${classes.toolbar} ${classes.applogo}`}>
                 <Typography variant="h6" noWrap component={Link} to="/dashboard">
                     Shiny React App
                 </Typography>
@@ -88,14 +91,19 @@ export default function Sidebar(props: Props) {
             <Divider />
             <List>
                 {[
-                    { label: 'Transakcje', link: '/transactions' },
-                    { label: 'Wyszukaj', link: '/search' },
-                    { label: 'Statystyki', link: '/statistics' },
+                    { label: 'Transakcje', link: '/transactions', icon: <AddBoxIcon /> },
+                    { label: 'Wyszukaj', link: '/search', icon: <SearchIcon /> },
+                    { label: 'Statystyki', link: '/statistics', icon: <DataUsageIcon /> },
                 ].map((text) => (
-                    <ListItem button key={text.link} component={Link} to={text.link}>
-                        <ListItemIcon>
-                            <MailIcon />
-                        </ListItemIcon>
+                    <ListItem
+                        button
+                        key={text.link}
+                        component={Link}
+                        to={text.link}
+                        onClick={() => handleDrawerToggle(false)}
+                        onKeyDown={() => handleDrawerToggle(false)}
+                    >
+                        <ListItemIcon>{text.icon}</ListItemIcon>
                         <ListItemText primary={text.label} />
                     </ListItem>
                 ))}
@@ -111,7 +119,7 @@ export default function Sidebar(props: Props) {
             <CssBaseline />
             <AppBar position="fixed" className={classes.appBar}>
                 <Toolbar disableGutters={false}>
-                    <IconButton color="inherit" aria-label="open drawer" edge="start" onClick={handleDrawerToggle} className={classes.menuButton}>
+                    <IconButton color="inherit" aria-label="open drawer" edge="start" onClick={() => handleDrawerToggle(true)} className={classes.menuButton}>
                         <MenuIcon />
                     </IconButton>
                     <Typography variant="h6" noWrap>
@@ -125,9 +133,9 @@ export default function Sidebar(props: Props) {
                     <Drawer
                         container={container}
                         variant="temporary"
-                        anchor={theme.direction === 'rtl' ? 'right' : 'left'}
+                        anchor="left"
                         open={mobileOpen}
-                        onClose={handleDrawerToggle}
+                        onClose={() => handleDrawerToggle(false)}
                         classes={{
                             paper: classes.drawerPaper,
                         }}

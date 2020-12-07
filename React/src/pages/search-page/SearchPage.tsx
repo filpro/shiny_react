@@ -1,5 +1,5 @@
 import React from 'react';
-import DenseTable from '../../components/Mytable';
+import DenseTable from '../../components/Mytable/Mytable';
 import ShinyContext from '../../context/ShinyContext';
 
 const SearchPage: React.FC = (): JSX.Element => {
@@ -7,7 +7,7 @@ const SearchPage: React.FC = (): JSX.Element => {
 
     return (
         <div>
-            <DenseTable data={mtcars} />
+            <DenseTable data={mtcars!} />
         </div>
     );
 };

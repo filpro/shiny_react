@@ -1,4 +1,4 @@
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, Redirect } from 'react-router-dom';
 import React from 'react';
 import StatisticsPage from '../../pages/statistics-page/StatisticsPage';
 import DashboardPage from '../../pages/dashboard-page/DashboardPage';
@@ -9,7 +9,7 @@ const AppRouter: React.FC = (): JSX.Element => {
     return (
         <Switch>
             <Route exact path="/">
-                <DashboardPage />
+                <Redirect to="/dashboard" />
             </Route>
             <Route path="/dashboard">
                 <DashboardPage />
