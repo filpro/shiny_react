@@ -7,6 +7,8 @@ import Mtcars from './models/Mtcars';
 import Sidebar from './components/Sidebar/Sidebar';
 import AppRouter from './components/Router/AppRouter';
 import ShinyContext from './context/ShinyContext';
+import UserService from './services/UserService';
+import User from './models/User';
 
 declare let window: IWindow;
 
@@ -27,6 +29,7 @@ const useStyles = makeStyles((theme: Theme) =>
 const App: React.FC = (): JSX.Element => {
     const [apiUrl, setApiUrl] = useState('session has not been initialized yet');
     const [valApiUrl, setValApiUrl] = useState('');
+    const [userApiUrl, setUserApiUrl] = useState('');
     const [mtcars, setMtcars] = useState<Mtcars[]>([]);
     const [seconds, setSeconds] = useState(0);
     const [value, setValue] = useState(0);
@@ -43,8 +46,12 @@ const App: React.FC = (): JSX.Element => {
         });
 
         window.Shiny.addCustomMessageHandler<string>('valUrlPath', (url: string) => {
-            console.log(url);
             setValApiUrl(url);
+        });
+
+        window.Shiny.addCustomMessageHandler<string>('userApi', (url: string) => {
+            setUserApiUrl(url);
+            UserService.setApiUrl(url);
         });
 
         window.Shiny.addCustomMessageHandler<number>('sessionDuration', (duration: number) => {
@@ -64,6 +71,7 @@ const App: React.FC = (): JSX.Element => {
     const contextValue = {
         apiUrl,
         valApiUrl,
+        userApiUrl,
         seconds,
         value,
         mtcars,

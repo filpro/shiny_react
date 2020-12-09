@@ -1,9 +1,27 @@
-/* eslint-disable no-use-before-define */
-import React from 'react';
-import TextField from '@material-ui/core/TextField';
-import Autocomplete from '@material-ui/lab/Autocomplete';
-import { Button, Divider } from '@material-ui/core';
-import ClientAdder from './ClientAdder/ClientAdder';
+import { makeStyles, Theme, createStyles, Grid, Container } from '@material-ui/core';
+import React, { useState } from 'react';
+import Button from '@material-ui/core/Button';
+import ClientSelect from './ClientSelect/ClientSelect';
+import DatePicker from './DatePicker/DatePicker';
+import PriceInput from './PriceInput/PriceInput';
+import ProductId from './ProductId/ProductId';
+import TransactionConfirmation from './TransactionConfirmation/TransactionConfirmation';
+import User from '../../../models/User';
+
+const useStyles = makeStyles((theme: Theme) =>
+    createStyles({
+        root: {
+            '& .MuiTextField-root': {
+                margin: theme.spacing(1),
+                width: '100%',
+            },
+        },
+        submitButton: {
+            margin: theme.spacing(1),
+            width: '100%',
+        },
+    })
+);
 
 // Top 100 films as rated by IMDb users. http://www.imdb.com/chart/top
 const top100Films = [
@@ -109,43 +127,78 @@ const top100Films = [
     { title: 'Monty Python and the Holy Grail', year: 1975 },
 ];
 
-const ClientSelect: React.FC = (): JSX.Element => {
-    const [open, setOpen] = React.useState(false);
+const TransactionForm: React.FC = (): JSX.Element => {
+    const classes = useStyles();
+    const [transactionDate, setTransactionDate] = useState<Date | null>(new Date());
+    const [productId, setProductId] = useState('');
+    const [productPrice, setProductPrice] = useState('');
 
-    const newClientHandler = (): void => {
-        setOpen(true);
+    const [options, setOptions] = React.useState(top100Films);
+    const [clientSelected, setClientSelected] = useState<{ title: string; year: number } | undefined>(options[0]);
+    const [inputValue, setInputValue] = useState('');
+
+    const [openConfirmationDialog, setOpenConfirmationDialog] = React.useState(false);
+
+    const handleproductIdChange = (id: string): void => {
+        setProductId(id.toUpperCase());
+    };
+
+    const handlExpandOptions = (user: User): void => {
+        const tempOptions = [...options];
+        const title = `${user.firstName} ${user.lastName}`;
+        tempOptions.push({ title, year: 999 });
+        setOptions(tempOptions);
+        setInputValue(title);
+        setClientSelected(tempOptions.find((x) => x.title === title));
     };
 
     return (
-        <div>
-            <ClientAdder open={open} setOpen={setOpen} />
-            <Autocomplete
-                size="small"
-                id="combo-box-demo"
-                options={top100Films}
-                getOptionLabel={(option) => option.title}
-                renderInput={(params) => <TextField {...params} label="Nazwa klienta" fullWidth />}
-                renderOption={(option) => {
-                    return (
-                        <>
-                            <div>
-                                {option.title}
-                                <Divider />
-                            </div>
-                        </>
-                    );
-                }}
-                noOptionsText={<Button onMouseDown={() => newClientHandler()}>Dodaj nowego klienta</Button>}
-                ListboxProps={{
-                    style: {
-                        maxHeight: '150px',
-                        border: '1px solid black',
-                        fontSize: 'small',
-                    },
-                }}
+        <Container>
+            <TransactionConfirmation
+                open={openConfirmationDialog}
+                setOpen={setOpenConfirmationDialog}
+                transactionDate={transactionDate}
+                productId={productId}
+                clientSelected={clientSelected}
+                productPrice={productPrice}
             />
-        </div>
+            <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+                <form className={classes.root} noValidate>
+                    <div>
+                        <DatePicker date={transactionDate} handleDateChange={setTransactionDate} />
+                    </div>
+                    <div>
+                        <ProductId productId={productId} handleProductIdChange={handleproductIdChange} />
+                    </div>
+                    <div>
+                        <ClientSelect
+                            value={clientSelected}
+                            setValue={setClientSelected}
+                            options={options}
+                            setOptions={setOptions}
+                            expandOptions={handlExpandOptions}
+                            inputValue={inputValue}
+                            setInputValue={setInputValue}
+                        />
+                    </div>
+                    <div>
+                        <PriceInput productPrice={productPrice} handleProductPriceChange={setProductPrice} />
+                    </div>
+                    <div>
+                        <Button
+                            variant="contained"
+                            size="large"
+                            color="primary"
+                            className={classes.submitButton}
+                            onClick={() => setOpenConfirmationDialog(true)}
+                        >
+                            SPRZEDANO
+                        </Button>
+                    </div>
+                </form>
+            </Grid>
+        </Container>
     );
 };
 
-export default ClientSelect;
+export default TransactionForm;

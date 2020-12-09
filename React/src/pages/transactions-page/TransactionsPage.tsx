@@ -1,5 +1,5 @@
 import React from 'react';
-import TransactionForm from '../../components/TransactionForm/TransactionForm';
+import TransactionForm from './TransactionForm/TransactionForm';
 
 const TransactionsPage: React.FC = (): JSX.Element => {
     return (

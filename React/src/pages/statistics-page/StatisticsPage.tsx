@@ -3,7 +3,7 @@ import React, { useContext } from 'react';
 import ShinyContext from '../../context/ShinyContext';
 
 const StatisticsPage: React.FC = (): JSX.Element => {
-    const { apiUrl, valApiUrl, seconds, value, handleClickRandom } = useContext(ShinyContext);
+    const { apiUrl, userApiUrl, valApiUrl, seconds, value, handleClickRandom } = useContext(ShinyContext);
     return (
         <Grid item>
             <Typography color="textSecondary" gutterBottom>
@@ -11,6 +11,9 @@ const StatisticsPage: React.FC = (): JSX.Element => {
             </Typography>
             <Typography color="textSecondary" gutterBottom>
                 {`Get an API: ${valApiUrl} - ${seconds} - ${value}`}
+            </Typography>
+            <Typography color="textSecondary" gutterBottom>
+                {`User API URL: ${userApiUrl}`}
             </Typography>
             <Button size="small" onClick={() => handleClickRandom!()}>
                 Get random

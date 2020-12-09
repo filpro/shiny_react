@@ -16,7 +16,8 @@ import AddBoxIcon from '@material-ui/icons/AddBox';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import { Link } from 'react-router-dom';
-import { makeStyles, useTheme, Theme, createStyles } from '@material-ui/core/styles';
+import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
+import HomeIcon from '@material-ui/icons/Home';
 
 const drawerWidth = 240;
 
@@ -77,21 +78,20 @@ export default function Sidebar(props: Props) {
     const [mobileOpen, setMobileOpen] = React.useState(false);
 
     const handleDrawerToggle = (open: boolean) => {
-        console.log(`SIDEBAR: ${open}`);
         setMobileOpen(open);
     };
 
     const drawer = (
         <div>
             <div role="presentation" className={`${classes.toolbar} ${classes.applogo}`}>
-                <Typography variant="h6" noWrap component={Link} to="/dashboard">
-                    Shiny React App
-                </Typography>
+                <Link to="/dashboard">
+                    <HomeIcon style={{ fontSize: 55 }} />
+                </Link>
             </div>
             <Divider />
             <List>
                 {[
-                    { label: 'Transakcje', link: '/transactions', icon: <AddBoxIcon /> },
+                    { label: 'Nowa transakcja', link: '/transactions', icon: <AddBoxIcon /> },
                     { label: 'Wyszukaj', link: '/search', icon: <SearchIcon /> },
                     { label: 'Statystyki', link: '/statistics', icon: <DataUsageIcon /> },
                 ].map((text) => (

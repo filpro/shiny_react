@@ -3,14 +3,13 @@ import React from 'react';
 import DateFnsUtils from '@date-io/date-fns';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
 
-const DatePicker: React.FC = (): JSX.Element => {
+interface IProps {
+    date: Date | null;
+    handleDateChange(date: Date | null): void;
+}
+
+const DatePicker: React.FC<IProps> = (props: IProps): JSX.Element => {
     // The first commit of Material-UI
-    const [selectedDate, setSelectedDate] = React.useState<Date | null>(new Date());
-
-    const handleDateChange = (date: Date | null) => {
-        setSelectedDate(date);
-    };
-
     return (
         <MuiPickersUtilsProvider utils={DateFnsUtils}>
             <KeyboardDatePicker
@@ -20,8 +19,8 @@ const DatePicker: React.FC = (): JSX.Element => {
                 margin="normal"
                 id="date-picker-inline"
                 label="Data transmisji"
-                value={selectedDate}
-                onChange={handleDateChange}
+                value={props.date}
+                onChange={(e) => props.handleDateChange(e)}
                 KeyboardButtonProps={{
                     'aria-label': 'change date',
                 }}
