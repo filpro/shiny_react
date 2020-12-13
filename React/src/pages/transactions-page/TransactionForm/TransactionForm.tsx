@@ -6,7 +6,7 @@ import DatePicker from './DatePicker/DatePicker';
 import PriceInput from './PriceInput/PriceInput';
 import ProductId from './ProductId/ProductId';
 import TransactionConfirmation from './TransactionConfirmation/TransactionConfirmation';
-import User from '../../../models/User';
+import Customer from '../../../models/Customer';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -143,7 +143,7 @@ const TransactionForm: React.FC = (): JSX.Element => {
         setProductId(id.toUpperCase());
     };
 
-    const handlExpandOptions = (user: User): void => {
+    const handlExpandOptions = (user: Customer): void => {
         const tempOptions = [...options];
         const title = `${user.firstName} ${user.lastName}`;
         tempOptions.push({ title, year: 999 });

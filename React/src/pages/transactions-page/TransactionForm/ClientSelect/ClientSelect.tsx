@@ -4,14 +4,14 @@ import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { Button, Divider } from '@material-ui/core';
 import ClientAdder from './ClientAdder/ClientAdder';
-import User from '../../../../models/User';
+import Customer from '../../../../models/Customer';
 
 interface IProps {
     value: any;
-    setValue(user: User): void;
+    setValue(user: { title: string; year: number } | undefined): void;
     options: any;
     setOptions(x: any): void;
-    expandOptions(x: User): void;
+    expandOptions(x: Customer): void;
     inputValue: any;
     setInputValue(x: any): void;
 }

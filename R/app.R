@@ -3,15 +3,15 @@ library(magrittr)
 library(jsonlite)
 #Development mode
 #source('main.R')
-source('modules/UserApi.R')
+
 
 ui <- function() {
   htmlTemplate("../React/public/index.html")
 }
 
 server <- function(input, output, session) {
-
-  callModule(userApiModule,"api_module")
+  source('modules/CustomerApi.R')
+  callModule(customerApiModule,"customer_api_module")
 
   modMtcars = mtcars
   modMtcars = cbind(name = rownames(modMtcars), modMtcars)

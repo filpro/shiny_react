@@ -8,13 +8,13 @@ import FormGroup from '@material-ui/core/FormGroup';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { createStyles, makeStyles, Theme, useTheme } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
-import UserService from '../../../../../services/UserService';
-import User from '../../../../../models/User';
+import UserService from '../../../../../services/CustomerService';
+import Customer from '../../../../../models/Customer';
 
 interface IProps {
     open: boolean;
     setOpen(open: boolean): void;
-    setSelected(user: User): void;
+    setSelected(user: Customer): void;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -34,6 +34,7 @@ const ClientAdder: React.FC<IProps> = (props: IProps): JSX.Element => {
     const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
     const classes = useStyles();
     const [state, setState] = useState({
+        id: '',
         firstName: '',
         lastName: '',
     });
@@ -42,13 +43,13 @@ const ClientAdder: React.FC<IProps> = (props: IProps): JSX.Element => {
         props.setOpen(false);
     };
 
-    const handleChange = (event: any) => {
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setState({ ...state, [event.target.id]: event.target.value });
     };
 
     const handleConfirmation = async () => {
         const { firstName, lastName } = state;
-        const receivedUser: User = await UserService.saveUser(new User(firstName, lastName));
+        const receivedUser: Customer = await UserService.saveCustomer(new Customer('TESTID', firstName, lastName));
         props.setSelected(receivedUser);
         props.setOpen(false);
     };

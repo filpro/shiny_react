@@ -56,11 +56,14 @@ const TransactionConfirmation: React.FC<IProps> = (props: IProps): JSX.Element =
                 <TableBody>
                     {transactionInfo.map((value, index) => {
                         return (
+                            // eslint-disable-next-line react/no-array-index-key
                             <TableRow key={index}>
                                 <TableCell component="th" scope="row" className={classes.tableCell}>
                                     {value.label}
                                 </TableCell>
-                                <TableCell align="right" className={classes.tableCell}>{value.value}</TableCell>
+                                <TableCell align="right" className={classes.tableCell}>
+                                    {value.value}
+                                </TableCell>
                             </TableRow>
                         );
                     })}
