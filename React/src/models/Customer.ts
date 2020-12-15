@@ -1,13 +1,21 @@
 export default class Customer {
-    id: string;
+    ID: string;
 
-    firstName: string;
+    FIRST_NAME: string;
 
-    lastName: string;
+    DATE_CREATED?: Date;
+
+    IS_DELETED?: boolean;
+
+    DATE_MODIFIED?: Date;
+
+    AUTHOR?: string;
+
+    LAST_NAME: string;
 
     constructor(id: string, firstName: string, lastName: string) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.ID = id;
+        this.FIRST_NAME = firstName;
+        this.LAST_NAME = lastName;
     }
 }

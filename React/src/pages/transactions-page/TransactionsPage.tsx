@@ -1,11 +1,14 @@
 import React from 'react';
 import TransactionForm from './TransactionForm/TransactionForm';
+import NewCustomerStore, { CustomerController } from '../../stores/NewCustomer.Store';
 
 const TransactionsPage: React.FC = (): JSX.Element => {
     return (
-        <div>
-            <TransactionForm />
-        </div>
+        <>
+            <NewCustomerStore.Provider value={new CustomerController()}>
+                <TransactionForm />
+            </NewCustomerStore.Provider>
+        </>
     );
 };
 

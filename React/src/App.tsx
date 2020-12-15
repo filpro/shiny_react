@@ -2,12 +2,11 @@ import React, { useEffect, useState } from 'react';
 import './App.css';
 import { hot } from 'react-hot-loader';
 import { Grid, createStyles, makeStyles, Theme, Container, Paper } from '@material-ui/core';
-import IWindow from './utils/IWindow';
-import Mtcars from './models/Mtcars';
-import Sidebar from './components/Sidebar/Sidebar';
+import LinearProgress from '@material-ui/core/LinearProgress';
 import AppRouter from './components/Router/AppRouter';
-import ShinyContext from './context/ShinyContext';
+import Sidebar from './components/Sidebar/Sidebar';
 import CustomerService, { CustomerApi } from './services/CustomerService';
+import IWindow from './utils/IWindow';
 
 declare let window: IWindow;
 
@@ -26,72 +25,47 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const App: React.FC = (): JSX.Element => {
-    const [apiUrl, setApiUrl] = useState('session has not been initialized yet');
-    const [valApiUrl, setValApiUrl] = useState('');
-    const [mtcars, setMtcars] = useState<Mtcars[]>([]);
-    const [seconds, setSeconds] = useState(0);
-    const [value, setValue] = useState(0);
+    const [isInitialized, setIsInitialized] = useState(false);
+    const [isCustomerApiLoaded, setIsCustomerApiLoaded] = useState(false);
+    const [isShinyConnected, setIsShinyConnected] = useState(false);
+    const [progress, setProgress] = useState(0);
 
     const classes = useStyles();
 
     useEffect(() => {
-        window.Shiny.addCustomMessageHandler<Mtcars[]>('test', (data: Mtcars[]) => {
-            setMtcars(data);
-        });
-
-        window.Shiny.addCustomMessageHandler<string>('urlPath', (url: string) => {
-            setApiUrl(url);
-        });
-
-        window.Shiny.addCustomMessageHandler<string>('valUrlPath', (url: string) => {
-            setValApiUrl(url);
-        });
-
         window.Shiny.addCustomMessageHandler<CustomerApi>('customerApi', (urls: CustomerApi) => {
             CustomerService.setApiUrl(urls);
-            CustomerService.getAllCustomers();
-        });
-
-        window.Shiny.addCustomMessageHandler<number>('sessionDuration', (duration: number) => {
-            setSeconds(duration);
+            setIsCustomerApiLoaded(true);
         });
 
         $(document).on('shiny:connected', () => {
+            setIsShinyConnected(true);
             console.log(`Session initialized: ${Date()}`);
         });
-    });
 
-    const handleClickRandom = async () => {
-        const result: number = await fetch(valApiUrl).then((response) => response.json());
-        setValue(result);
-    };
+        const loadChecker: boolean[] = [isShinyConnected, isCustomerApiLoaded];
+        if (loadChecker.every((check: boolean) => check)) {
+            setIsInitialized(true);
+        }
 
-    const contextValue = {
-        apiUrl,
-        valApiUrl,
-        seconds,
-        value,
-        mtcars,
-        handleClickRandom,
-    };
+        setProgress((loadChecker.filter((x) => x).length / loadChecker.length) * 100);
+    }, [isShinyConnected, isCustomerApiLoaded]);
 
-    return (
-        <div className="App">
-            <header className="App-header">
-                <ShinyContext.Provider value={contextValue}>
-                    <Sidebar>
-                        <Container className={classes.gridcontainer}>
-                            <Paper className={classes.paper}>
-                                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                                    <AppRouter />
-                                </Grid>
-                            </Paper>
-                        </Container>
-                    </Sidebar>
-                </ShinyContext.Provider>
-            </header>
-        </div>
+    const appContent: JSX.Element = (
+        <header className="App-header">
+            <Sidebar>
+                <Container className={classes.gridcontainer}>
+                    <Paper className={classes.paper}>
+                        <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                            {isInitialized ? <AppRouter /> : <LinearProgress variant="determinate" value={progress} />}
+                        </Grid>
+                    </Paper>
+                </Container>
+            </Sidebar>
+        </header>
     );
+
+    return <div className="App">{appContent}</div>;
 };
 
 export default hot(module)(App);

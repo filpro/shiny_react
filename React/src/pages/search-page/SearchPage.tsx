@@ -1,13 +1,13 @@
 import React from 'react';
 import DenseTable from '../../components/Mytable/Mytable';
-import ShinyContext from '../../context/ShinyContext';
+import NewCustomerStore, { CustomerController } from '../../stores/NewCustomer.Store';
 
 const SearchPage: React.FC = (): JSX.Element => {
-    const { mtcars } = React.useContext(ShinyContext);
-
     return (
         <div>
-            <DenseTable data={mtcars!} />
+            <NewCustomerStore.Provider value={new CustomerController()}>
+                <DenseTable />
+            </NewCustomerStore.Provider>
         </div>
     );
 };

@@ -8,13 +8,12 @@ import FormGroup from '@material-ui/core/FormGroup';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { createStyles, makeStyles, Theme, useTheme } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
-import UserService from '../../../../../services/CustomerService';
 import Customer from '../../../../../models/Customer';
 
 interface IProps {
     open: boolean;
     setOpen(open: boolean): void;
-    setSelected(user: Customer): void;
+    addNewCustomer(user: Customer): void;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -34,7 +33,7 @@ const ClientAdder: React.FC<IProps> = (props: IProps): JSX.Element => {
     const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
     const classes = useStyles();
     const [state, setState] = useState({
-        id: '',
+        id: 'noid',
         firstName: '',
         lastName: '',
     });
@@ -48,9 +47,8 @@ const ClientAdder: React.FC<IProps> = (props: IProps): JSX.Element => {
     };
 
     const handleConfirmation = async () => {
-        const { firstName, lastName } = state;
-        const receivedUser: Customer = await UserService.saveCustomer(new Customer('TESTID', firstName, lastName));
-        props.setSelected(receivedUser);
+        const { id, firstName, lastName } = state;
+        props.addNewCustomer(new Customer(id, firstName, lastName));
         props.setOpen(false);
     };
 

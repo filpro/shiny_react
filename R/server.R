@@ -1,14 +1,3 @@
-library(shiny)
-library(magrittr)
-library(jsonlite)
-#Development mode
-#source('main.R')
-
-
-ui <- function() {
-  htmlTemplate("../React/public/index.html")
-}
-
 server <- function(input, output, session) {
   source('modules/CustomerApi.R')
   callModule(customerApiModule,"customer_api_module")
@@ -66,11 +55,3 @@ server <- function(input, output, session) {
   }, ignoreInit=TRUE)
 
 }
-
-# Serve the bundle at static/main.js
-if (dir.exists("dist")) {
-  addResourcePath("static", "dist")
-}
-
-# Run the application 
-shinyApp(ui = ui, server = server)

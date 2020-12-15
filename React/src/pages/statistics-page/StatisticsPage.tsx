@@ -1,23 +1,13 @@
 import { Grid, Typography, Button } from '@material-ui/core';
-import React, { useContext } from 'react';
-import ShinyContext from '../../context/ShinyContext';
+import React from 'react';
 
 const StatisticsPage: React.FC = (): JSX.Element => {
-    const { apiUrl, userApiUrl, valApiUrl, seconds, value, handleClickRandom } = useContext(ShinyContext);
     return (
         <Grid item>
             <Typography color="textSecondary" gutterBottom>
-                {`Geets an API: ${apiUrl} - ${seconds} - ${value}`}
+                Hello
             </Typography>
-            <Typography color="textSecondary" gutterBottom>
-                {`Get an API: ${valApiUrl} - ${seconds} - ${value}`}
-            </Typography>
-            <Typography color="textSecondary" gutterBottom>
-                {`User API URL: ${userApiUrl}`}
-            </Typography>
-            <Button size="small" onClick={() => handleClickRandom!()}>
-                Get random
-            </Button>
+            <Button size="small">Get random</Button>
         </Grid>
     );
 };

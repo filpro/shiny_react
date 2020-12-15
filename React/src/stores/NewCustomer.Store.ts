@@ -6,29 +6,45 @@ import CustomerService from '../services/CustomerService';
 
 interface ICustomerStore {
     getCustomerById(id: string): Promise<void>;
-    newCustomer?: Customer;
+    loadAllCustomers(): Promise<void>;
+    addCustomer(customer: Customer): Promise<void>;
+    setSelected(customer: Customer): void;
+    allCustomers?: Customer[];
+    selectedCustomer?: Customer;
     isFetchSucceed?: boolean;
     httpStatus?: number;
 }
 
 export class CustomerController implements ICustomerStore {
     constructor() {
+        this.loadAllCustomers();
         makeAutoObservable(this);
     }
 
-    async addCustomer(firstName: string, lastName: string): Promise<void> {
-        const newCustomer: Customer = await CustomerService.saveCustomer(new Customer('TESTID', firstName, lastName));
-        this.newCustomer = newCustomer;
+    async addCustomer(customer: Customer): Promise<void> {
+        const newCustomer: AxiosResponse<Customer> = await CustomerService.saveCustomer(customer);
+        this.loadAllCustomers();
+        this.selectedCustomer = newCustomer.data;
     }
 
-    async getAllCustomers(): Promise<void> {
+    async loadAllCustomers(): Promise<void> {
         const serverResponse: AxiosResponse<Customer[]> = await CustomerService.getAllCustomers();
-        this.allCustomers = serverResponse.data;
+        const response = serverResponse;
+        this.allCustomers = response.data;
     }
+
+    async getCustomerById(id: string): Promise<void> {
+        const serverResponse: AxiosResponse<Customer> = await CustomerService.getCustomerById(id);
+        this.selectedCustomer = serverResponse.data;
+    }
+
+    setSelected(customer: Customer): void {
+        this.selectedCustomer = customer;
+    }
+
+    selectedCustomer?: Customer;
 
     allCustomers?: Customer[];
-
-    newCustomer?: Customer;
 
     isFetchSucceed?: boolean | undefined;
 

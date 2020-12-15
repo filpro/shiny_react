@@ -43,10 +43,12 @@ const TransactionConfirmation: React.FC<IProps> = (props: IProps): JSX.Element =
         props.setOpen(false);
     };
 
+    const { FIRST_NAME, LAST_NAME } = props.clientSelected;
+
     const transactionInfo = [
         { value: props.transactionDate === null ? '' : props.transactionDate.toDateString(), label: 'Data transakcji' },
         { value: props.productId, label: 'ID produktu:' },
-        { value: props.clientSelected === null ? '' : props.clientSelected.title, label: 'Nazwa klienta:' },
+        { value: props.clientSelected === null ? '' : `${FIRST_NAME} ${LAST_NAME}`, label: 'Nazwa klienta:' },
         { value: props.productPrice, label: 'Cena:' },
     ];
 
