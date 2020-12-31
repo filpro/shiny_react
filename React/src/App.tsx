@@ -6,6 +6,7 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import AppRouter from './components/Router/AppRouter';
 import Sidebar from './components/Sidebar/Sidebar';
 import CustomerService, { CustomerApi } from './services/CustomerService';
+import TransactionService, { TransactionApi } from './services/TransactionService';
 import IWindow from './utils/IWindow';
 
 declare let window: IWindow;
@@ -27,6 +28,7 @@ const useStyles = makeStyles((theme: Theme) =>
 const App: React.FC = (): JSX.Element => {
     const [isInitialized, setIsInitialized] = useState(false);
     const [isCustomerApiLoaded, setIsCustomerApiLoaded] = useState(false);
+    const [isTransactionApiLoaded, setIsTransactionApiLoaded] = useState(false);
     const [isShinyConnected, setIsShinyConnected] = useState(false);
     const [progress, setProgress] = useState(0);
 
@@ -38,18 +40,23 @@ const App: React.FC = (): JSX.Element => {
             setIsCustomerApiLoaded(true);
         });
 
+        window.Shiny.addCustomMessageHandler<TransactionApi>('transactionApi', (urls: TransactionApi) => {
+            TransactionService.setApiUrl(urls);
+            setIsTransactionApiLoaded(true);
+        });
+
         $(document).on('shiny:connected', () => {
             setIsShinyConnected(true);
             console.log(`Session initialized: ${Date()}`);
         });
 
-        const loadChecker: boolean[] = [isShinyConnected, isCustomerApiLoaded];
+        const loadChecker: boolean[] = [isShinyConnected, isCustomerApiLoaded, isTransactionApiLoaded];
         if (loadChecker.every((check: boolean) => check)) {
             setIsInitialized(true);
         }
 
         setProgress((loadChecker.filter((x) => x).length / loadChecker.length) * 100);
-    }, [isShinyConnected, isCustomerApiLoaded]);
+    }, [isShinyConnected, isCustomerApiLoaded, isTransactionApiLoaded]);
 
     const appContent: JSX.Element = (
         <header className="App-header">

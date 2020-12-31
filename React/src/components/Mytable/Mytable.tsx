@@ -7,20 +7,20 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import { observer } from 'mobx-react';
 import classes from './Mytable.module.css';
-import NewCustomerStore from '../../stores/NewCustomer.Store';
-import Customer from '../../models/Customer';
+import NewTransactionStore from '../../stores/NewTransaction.Store';
+import Transaction from '../../models/Transaction';
 
 const DenseTable: React.FC = observer(
     (): JSX.Element => {
-        const newCustomerStore = useContext(NewCustomerStore);
-        const data = newCustomerStore.allCustomers;
+        const newTransactionStore = useContext(NewTransactionStore);
+        const data = newTransactionStore.allTransactions;
 
         const outputTable =
             data !== undefined ? (
                 <TableContainer component={Paper}>
                     <Table className={classes.mytable} size="small" aria-label="a dense table">
                         <TableBody>
-                            {data.map((row: Customer) => (
+                            {data.map((row: Transaction) => (
                                 <TableRow key={row.ID}>
                                     {Object.keys(row).map((col: string) => {
                                         if (col === 'ID') {

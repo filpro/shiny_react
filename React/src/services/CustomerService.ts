@@ -17,18 +17,12 @@ class CustomerService {
     }
 
     saveCustomer = async (customer: Customer): Promise<AxiosResponse<Customer>> => {
-        const result = await axios
-            .post(this.apiUrls!.customerApiAddNew, customer)
-            .then((response: AxiosResponse<Customer>) => response)
-            .catch((error) => error.response);
+        const result = await axios.post(this.apiUrls!.customerApiAddNew, customer).catch((error) => error.response);
         return result;
     };
 
     getAllCustomers = async (): Promise<AxiosResponse<Customer[]>> => {
-        const result = await axios
-            .get<Customer[], AxiosResponse<Customer[]>>(this.apiUrls!.customerApiGetAll)
-            .then((response: AxiosResponse<Customer[]>) => response)
-            .catch((error) => error.response);
+        const result = await axios.get<Customer[], AxiosResponse<Customer[]>>(this.apiUrls!.customerApiGetAll).catch((error) => error.response);
         return result;
     };
 
@@ -45,7 +39,6 @@ class CustomerService {
                     },
                     paramsSerializer: (params) => qs.stringify(params, { arrayFormat: 'comma' }),
                 })
-                .then((response: AxiosResponse<Customer[]>) => response)
                 .catch((error) => error.response);
             return result;
         }

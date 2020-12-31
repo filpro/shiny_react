@@ -8,6 +8,9 @@ import PriceInput from './PriceInput/PriceInput';
 import ProductId from './ProductId/ProductId';
 import TransactionConfirmation from './TransactionConfirmation/TransactionConfirmation';
 import NewCustomerStore from '../../../stores/NewCustomer.Store';
+import TransactionService from '../../../services/TransactionService';
+import Transaction from '../../../models/Transaction';
+import NewTransactionStore from '../../../stores/NewTransaction.Store';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -28,6 +31,7 @@ const TransactionForm: React.FC = observer(
     (): JSX.Element => {
         const classes = useStyles();
         const newCustomerStore = useContext(NewCustomerStore);
+        const newTransactionStore = useContext(NewTransactionStore);
         const [transactionDate, setTransactionDate] = useState<Date | null>(new Date());
         const [productId, setProductId] = useState('');
         const [productPrice, setProductPrice] = useState('');
@@ -43,6 +47,10 @@ const TransactionForm: React.FC = observer(
             }
         };
 
+        const handleHasConfirmed = () => {
+            TransactionService.saveTransaction(new Transaction(newCustomerStore.selectedCustomer!.ID, productId, transactionDate, productPrice));
+        };
+
         return (
             <Container>
                 {newCustomerStore.selectedCustomer ? (
@@ -53,6 +61,7 @@ const TransactionForm: React.FC = observer(
                         productId={productId}
                         clientSelected={newCustomerStore.selectedCustomer}
                         productPrice={productPrice}
+                        handleHasConfirmed={handleHasConfirmed}
                     />
                 ) : null}
                 <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>

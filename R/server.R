@@ -1,6 +1,8 @@
 server <- function(input, output, session) {
   source('modules/CustomerApi.R')
+  source('modules/TransactionApi.R')
   callModule(customerApiModule,"customer_api_module")
+  callModule(transactionApiModule,"transaction_api_module")
 
   modMtcars = mtcars
   modMtcars = cbind(name = rownames(modMtcars), modMtcars)

@@ -1,13 +1,13 @@
 import React from 'react';
 import DenseTable from '../../components/Mytable/Mytable';
-import NewCustomerStore, { CustomerController } from '../../stores/NewCustomer.Store';
+import NewTransactionStore, { TransactionController } from '../../stores/NewTransaction.Store';
 
 const SearchPage: React.FC = (): JSX.Element => {
     return (
         <div>
-            <NewCustomerStore.Provider value={new CustomerController()}>
+            <NewTransactionStore.Provider value={new TransactionController()}>
                 <DenseTable />
-            </NewCustomerStore.Provider>
+            </NewTransactionStore.Provider>
         </div>
     );
 };

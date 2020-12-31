@@ -1,23 +1,25 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
 import Hidden from '@material-ui/core/Hidden';
-import IconButton from '@material-ui/core/IconButton';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import MenuIcon from '@material-ui/icons/Menu';
 import DataUsageIcon from '@material-ui/icons/DataUsage';
 import SearchIcon from '@material-ui/icons/Search';
 import AddBoxIcon from '@material-ui/icons/AddBox';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import HomeIcon from '@material-ui/icons/Home';
+import { isMobile } from 'react-device-detect';
+
+import BottomNavigation from '@material-ui/core/BottomNavigation';
+import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
 
 const drawerWidth = 240;
 
@@ -38,8 +40,7 @@ const useStyles = makeStyles((theme: Theme) =>
                 marginLeft: drawerWidth,
             },
         },
-        menuButton: {
-            marginRight: theme.spacing(2),
+        bottomNavigation: {
             [theme.breakpoints.up('sm')]: {
                 display: 'none',
             },
@@ -59,27 +60,48 @@ const useStyles = makeStyles((theme: Theme) =>
             alignItems: 'center',
             justifyContent: 'center',
         },
+        stickToBottom: {
+            width: '100%',
+            position: 'fixed',
+            bottom: 0,
+        },
+        hiddenObject: {
+            display: 'none',
+        },
     })
 );
 
+const routes = [
+    { label: 'Transakcja', link: '/transactions', icon: <AddBoxIcon /> },
+    { label: 'Wyszukaj', link: '/search', icon: <SearchIcon /> },
+    { label: 'Statystyki', link: '/statistics', icon: <DataUsageIcon /> },
+];
+
 interface Props {
-    /**
-     * Injected by the documentation to work in an iframe.
-     * You won't need it on your project.
-     */
-    // eslint-disable-next-line react/require-default-props
-    window?: () => Window;
     children: JSX.Element;
 }
 
-export default function Sidebar(props: Props) {
-    const { window } = props;
+const Sidebar: React.FC<Props> = (props: Props): JSX.Element => {
     const classes = useStyles();
-    const [mobileOpen, setMobileOpen] = React.useState(false);
+    const currentLocation = useLocation().pathname;
+    const [value, setValue] = React.useState(routes.findIndex((x) => x.link === currentLocation));
+    const [innerHeight] = React.useState(window.visualViewport.height);
+    const [isVisibleBottomNav, setIsVisibleBottomNav] = React.useState(true);
 
-    const handleDrawerToggle = (open: boolean) => {
-        setMobileOpen(open);
-    };
+    useEffect(() => {
+        /** This is a way to handle opened keyboard overlapping bottom navigation on the mobile view */
+        window.visualViewport.addEventListener('resize', () => {
+            if (isMobile && window.visualViewport.height < innerHeight) {
+                setIsVisibleBottomNav(false);
+            } else {
+                setIsVisibleBottomNav(true);
+            }
+        });
+    }, [innerHeight]);
+
+    useEffect(() => {
+        setValue(routes.findIndex((x) => x.link === currentLocation));
+    }, [currentLocation]);
 
     const drawer = (
         <div>
@@ -90,19 +112,8 @@ export default function Sidebar(props: Props) {
             </div>
             <Divider />
             <List>
-                {[
-                    { label: 'Nowa transakcja', link: '/transactions', icon: <AddBoxIcon /> },
-                    { label: 'Wyszukaj', link: '/search', icon: <SearchIcon /> },
-                    { label: 'Statystyki', link: '/statistics', icon: <DataUsageIcon /> },
-                ].map((text) => (
-                    <ListItem
-                        button
-                        key={text.link}
-                        component={Link}
-                        to={text.link}
-                        onClick={() => handleDrawerToggle(false)}
-                        onKeyDown={() => handleDrawerToggle(false)}
-                    >
+                {routes.map((text) => (
+                    <ListItem button key={text.link} component={Link} to={text.link}>
                         <ListItemIcon>{text.icon}</ListItemIcon>
                         <ListItemText primary={text.label} />
                     </ListItem>
@@ -112,16 +123,11 @@ export default function Sidebar(props: Props) {
         </div>
     );
 
-    const container = window !== undefined ? () => window().document.body : undefined;
-
     return (
         <div className={classes.root}>
             <CssBaseline />
             <AppBar position="fixed" className={classes.appBar}>
                 <Toolbar disableGutters={false}>
-                    <IconButton color="inherit" aria-label="open drawer" edge="start" onClick={() => handleDrawerToggle(true)} className={classes.menuButton}>
-                        <MenuIcon />
-                    </IconButton>
                     <Typography variant="h6" noWrap>
                         Responsive drawer
                     </Typography>
@@ -129,23 +135,6 @@ export default function Sidebar(props: Props) {
             </AppBar>
             <nav className={classes.drawer} aria-label="mailbox folders">
                 {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
-                <Hidden smUp implementation="css">
-                    <Drawer
-                        container={container}
-                        variant="temporary"
-                        anchor="left"
-                        open={mobileOpen}
-                        onClose={() => handleDrawerToggle(false)}
-                        classes={{
-                            paper: classes.drawerPaper,
-                        }}
-                        ModalProps={{
-                            keepMounted: true, // Better open performance on mobile.
-                        }}
-                    >
-                        {drawer}
-                    </Drawer>
-                </Hidden>
                 <Hidden xsDown implementation="css">
                     <Drawer
                         classes={{
@@ -158,10 +147,22 @@ export default function Sidebar(props: Props) {
                     </Drawer>
                 </Hidden>
             </nav>
-            <main className={classes.content}>
-                <div className={classes.toolbar} />
+            <BottomNavigation
+                value={value}
+                showLabels
+                className={`${classes.stickToBottom} ${classes.bottomNavigation} ${!isVisibleBottomNav ? classes.hiddenObject : ''}`}
+                onChange={(_, newValue) => setValue(newValue)}
+            >
+                {routes.map((route) => {
+                    return <BottomNavigationAction key={route.link} component={Link} to={route.link} label={route.label} icon={route.icon} />;
+                })}
+            </BottomNavigation>
+            <main className={`${classes.content}`}>
+                <div className={`${classes.toolbar}`} />
                 {props.children}
             </main>
         </div>
     );
-}
+};
+
+export default Sidebar;
