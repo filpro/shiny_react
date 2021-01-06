@@ -18,10 +18,6 @@ const useStyles = makeStyles((theme: Theme) =>
             wordWrap: 'break-word',
             gridGap: theme.spacing(3),
         },
-        paper: {
-            margin: `${theme.spacing(2)}px auto`,
-            padding: theme.spacing(2),
-        },
     })
 );
 
@@ -62,11 +58,7 @@ const App: React.FC = (): JSX.Element => {
         <header className="App-header">
             <Sidebar>
                 <Container className={classes.gridcontainer}>
-                    <Paper className={classes.paper}>
-                        <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                            {isInitialized ? <AppRouter /> : <LinearProgress variant="determinate" value={progress} />}
-                        </Grid>
-                    </Paper>
+                    {isInitialized ? <AppRouter /> : <LinearProgress variant="determinate" value={progress} />}
                 </Container>
             </Sidebar>
         </header>

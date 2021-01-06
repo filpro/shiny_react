@@ -29,7 +29,6 @@ const ClientSelect: React.FC = observer(
                 setInputValue(`${customer.FIRST_NAME} ${customer.LAST_NAME}`);
             }
         };
-
         return (
             <>
                 <ClientAdder open={open} setOpen={setOpen} addNewCustomer={addNew} />

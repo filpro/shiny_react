@@ -7,14 +7,14 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import { observer } from 'mobx-react';
 import classes from './Mytable.module.css';
-import NewTransactionStore from '../../stores/NewTransaction.Store';
+import InspectTransactionStore from '../../stores/TransactionInspect.Store';
 import Transaction from '../../models/Transaction';
 
 const DenseTable: React.FC = observer(
     (): JSX.Element => {
-        const newTransactionStore = useContext(NewTransactionStore);
-        const data = newTransactionStore.allTransactions;
-
+        const inspectTransactionsStore = useContext(InspectTransactionStore);
+        const data = inspectTransactionsStore.localFilteredTransactions;
+        console.log(data);
         const outputTable =
             data !== undefined ? (
                 <TableContainer component={Paper}>

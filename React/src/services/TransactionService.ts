@@ -1,9 +1,12 @@
 import axios, { AxiosResponse } from 'axios';
+import Customer from '../models/Customer';
 import Transaction from '../models/Transaction';
+import Product from '../models/Product';
 
 export interface TransactionApi {
     transactionApiAddNew: string;
     transactionApiGetAll: string;
+    transactionApiGetByDates: string;
 }
 
 class TransactionService {
@@ -20,6 +23,18 @@ class TransactionService {
 
     async getAllTransactions(): Promise<AxiosResponse<Transaction[]>> {
         const result = await axios.get(this.apiUrls!.transactionApiGetAll).catch((error) => error.response);
+        return result;
+    }
+
+    async getTransactionByDate(from?: Date, to?: Date): Promise<AxiosResponse<[Transaction[], Customer[], Product[]]>> {
+        const result = await axios
+            .get(this.apiUrls!.transactionApiGetByDates, {
+                params: {
+                    dateFrom: from === undefined ? new Date() : from,
+                    dateTo: to === undefined ? new Date() : to,
+                },
+            })
+            .catch((error) => error.response);
         return result;
     }
 }

@@ -31,7 +31,6 @@ const TransactionForm: React.FC = observer(
     (): JSX.Element => {
         const classes = useStyles();
         const newCustomerStore = useContext(NewCustomerStore);
-        const newTransactionStore = useContext(NewTransactionStore);
         const [transactionDate, setTransactionDate] = useState<Date | null>(new Date());
         const [productId, setProductId] = useState('');
         const [productPrice, setProductPrice] = useState('');
