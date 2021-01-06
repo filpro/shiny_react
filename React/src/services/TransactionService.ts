@@ -26,12 +26,12 @@ class TransactionService {
         return result;
     }
 
-    async getTransactionByDate(from?: Date, to?: Date): Promise<AxiosResponse<[Transaction[], Customer[], Product[]]>> {
+    async getTransactionByDate(from: Date, to: Date): Promise<AxiosResponse<[Transaction[], Customer[], Product[]]>> {
         const result = await axios
             .get(this.apiUrls!.transactionApiGetByDates, {
                 params: {
-                    dateFrom: from === undefined ? new Date() : from,
-                    dateTo: to === undefined ? new Date() : to,
+                    dateFrom: from,
+                    dateTo: to,
                 },
             })
             .catch((error) => error.response);

@@ -192,10 +192,10 @@ DataService$set("public","addTransmission", function(ID = NULL, TRANSMISSION_DAT
 
 
 DataService$set("public","prepareData", function(){
-  c_n = 50
+  c_n = 200
   tm_n = 40
-  p_n = 350
-  tn_n = 200
+  p_n = 2000
+  tn_n = 2000
   
   
   dates = seq.Date(Sys.Date()-3*tm_n, Sys.Date(),"day") %>% sample(tm_n)
