@@ -1,7 +1,7 @@
 import { makeStyles, Theme, createStyles, Grid, Paper } from '@material-ui/core';
 import React from 'react';
-import DenseTable from '../../components/Mytable/Mytable';
 import TransactionInspect, { TransactionController } from '../../stores/TransactionInspect.Store';
+import ItemList from './ItemList/ItemList';
 import SearchPanel from './SearchPanel/SearchPanel';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -24,11 +24,13 @@ const SearchPage: React.FC = (): JSX.Element => {
                         <SearchPanel />
                     </Grid>
                 </Paper>
-                <Paper className={classes.paper}>
-                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                        <DenseTable />
-                    </Grid>
-                </Paper>
+                {/* <Paper className={classes.paper}> */}
+                <hr />
+                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                    {/* <DenseTable /> */}
+                    <ItemList />
+                </Grid>
+                {/* </Paper> */}
             </TransactionInspect.Provider>
         </div>
     );

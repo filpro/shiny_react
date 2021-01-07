@@ -49,22 +49,18 @@ export class TransactionController implements ITransactionStore {
         this.getServerFilteredData();
     }
 
-    setProductIdsFilter = (products: Product[] | [], changeReason: string): void => {
+    setProductIdsFilter = (products: Product[] | []): void => {
         this.productIdsFilter = products;
         this.applyLocalFilter();
         this.updateCustomerDropdownList();
-        //if (changeReason === 'remove-option') {
-            this.updateProductDropdownList();
-        //}
+        this.updateProductDropdownList();
     };
 
-    setCustomerIdsFilter = (customers: Customer[] | [], changeReason: string): void => {
+    setCustomerIdsFilter = (customers: Customer[] | []): void => {
         this.customerIdsFilter = customers;
         this.applyLocalFilter();
         this.updateProductDropdownList();
-        //if (changeReason === 'remove-option') {
-            this.updateCustomerDropdownList();
-        //}
+        this.updateCustomerDropdownList();
     };
 
     applyLocalFilter = (): void => {
