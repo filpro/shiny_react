@@ -22,7 +22,7 @@ const Row = observer(
     ({ index, key, style }): JSX.Element => {
         const classes = useStyles();
         const inspectTransactionsStore = useContext(InspectTransactionStore);
-        const transaction = inspectTransactionsStore!.localFilteredTransactions[index];
+        const transaction = inspectTransactionsStore?.localFilteredTransactions[index];
         return (
             <div style={style}>
                 <Card className={`${classes.Card}`}>
