@@ -5,12 +5,13 @@ import { observer } from 'mobx-react';
 import ClientSelect from './ClientSelect/ClientSelect';
 import DatePicker from './DatePicker/DatePicker';
 import PriceInput from './PriceInput/PriceInput';
-import ProductId from './ProductId/ProductId';
+import ProductName from './ProductId/ProductId';
 import TransactionConfirmation from './TransactionConfirmation/TransactionConfirmation';
 import NewCustomerStore from '../../../stores/NewCustomer.Store';
+import NewTransactionStore from '../../../stores/NewTransaction.Store';
 import TransactionService from '../../../services/TransactionService';
 import Transaction from '../../../models/Transaction';
-import NewTransactionStore from '../../../stores/NewTransaction.Store';
+import Product from '../../../models/Product';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -31,8 +32,9 @@ const TransactionForm: React.FC = observer(
     (): JSX.Element => {
         const classes = useStyles();
         const newCustomerStore = useContext(NewCustomerStore);
+        const newTransactionStore = useContext(NewTransactionStore);
         const [transactionDate, setTransactionDate] = useState<Date | null>(new Date());
-        const [productId, setProductId] = useState('');
+        const [productName, setProductId] = useState('');
         const [productPrice, setProductPrice] = useState('');
         const [openConfirmationDialog, setOpenConfirmationDialog] = React.useState(false);
 
@@ -47,7 +49,12 @@ const TransactionForm: React.FC = observer(
         };
 
         const handleHasConfirmed = () => {
-            TransactionService.saveTransaction(new Transaction(newCustomerStore.selectedCustomer!.ID, productId, transactionDate, productPrice));
+            newTransactionStore.addTransaction(new Product(productName), new Transaction(newCustomerStore.selectedCustomer!.ID, transactionDate, productPrice));
+        };
+
+        const handleTransactionDateChange = (date: Date) => {
+            console.log(date);
+            setTransactionDate(date);
         };
 
         return (
@@ -57,7 +64,7 @@ const TransactionForm: React.FC = observer(
                         open={openConfirmationDialog}
                         setOpen={setOpenConfirmationDialog}
                         transactionDate={transactionDate}
-                        productId={productId}
+                        productId={productName}
                         clientSelected={newCustomerStore.selectedCustomer}
                         productPrice={productPrice}
                         handleHasConfirmed={handleHasConfirmed}
@@ -66,10 +73,10 @@ const TransactionForm: React.FC = observer(
                 <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
                     <form className={classes.root} noValidate>
                         <div>
-                            <DatePicker date={transactionDate} handleDateChange={setTransactionDate} />
+                            <DatePicker date={transactionDate} handleDateChange={handleTransactionDateChange} />
                         </div>
                         <div>
-                            <ProductId productId={productId} handleProductIdChange={handleproductIdChange} />
+                            <ProductName productName={productName} handleProductNameChange={handleproductIdChange} />
                         </div>
                         <div>
                             <ClientSelect />

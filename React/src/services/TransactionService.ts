@@ -7,6 +7,8 @@ export interface TransactionApi {
     transactionApiAddNew: string;
     transactionApiGetAll: string;
     transactionApiGetByDates: string;
+    transactionApiUpdate: string;
+    transactionApiDelete: string;
 }
 
 class TransactionService {
@@ -35,6 +37,16 @@ class TransactionService {
                 },
             })
             .catch((error) => error.response);
+        return result;
+    }
+
+    async updateTransaction(transaction: Transaction): Promise<AxiosResponse<Transaction>> {
+        const result = await axios.post(this.apiUrls!.transactionApiUpdate, transaction).catch((error) => error.response);
+        return result;
+    }
+
+    async deleteTransaction(transaction: Transaction): Promise<AxiosResponse<string>> {
+        const result = await axios.post(this.apiUrls!.transactionApiDelete, transaction).catch((error) => error.response);
         return result;
     }
 }

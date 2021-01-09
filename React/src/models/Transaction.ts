@@ -3,9 +3,9 @@ export default class Transaction {
 
     CUSTOMER_ID: string;
 
-    PRODUCT_ID: string;
+    PRODUCT_ID?: string;
 
-    TRANSMISSION_ID: string;
+    TRANSMISSION_ID: Date;
 
     PRODUCT_PRICE: number;
 
@@ -21,9 +21,8 @@ export default class Transaction {
 
     AUTHOR?: string;
 
-    constructor(customerId: string, productId: string, transmissionId: string, productPrice: number) {
+    constructor(customerId: string, transmissionId: string, productPrice: number) {
         this.CUSTOMER_ID = customerId;
-        this.PRODUCT_ID = productId;
         this.TRANSMISSION_ID = transmissionId;
         this.PRODUCT_PRICE = productPrice;
     }

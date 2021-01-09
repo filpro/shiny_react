@@ -15,7 +15,6 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const SearchPage: React.FC = (): JSX.Element => {
     const classes = useStyles();
-
     return (
         <div>
             <TransactionInspect.Provider value={new TransactionController()}>
@@ -24,13 +23,9 @@ const SearchPage: React.FC = (): JSX.Element => {
                         <SearchPanel />
                     </Grid>
                 </Paper>
-                {/* <Paper className={classes.paper}> */}
-                <hr />
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                    {/* <DenseTable /> */}
                     <ItemList />
                 </Grid>
-                {/* </Paper> */}
             </TransactionInspect.Provider>
         </div>
     );

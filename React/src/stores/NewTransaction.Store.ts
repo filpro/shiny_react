@@ -1,12 +1,14 @@
 import { AxiosResponse } from 'axios';
 import { makeAutoObservable } from 'mobx';
 import { createContext } from 'react';
+import Product from '../models/Product';
 import Transaction from '../models/Transaction';
+import ProductService from '../services/ProductService';
 import TransactionService from '../services/TransactionService';
 
 interface ITransactionStore {
     loadAllTransactions(): Promise<void>;
-    addTransaction(customer: Transaction): Promise<void>;
+    addTransaction(product: Product, transaction: Transaction): Promise<void>;
     allTransactions?: Transaction[];
     newTransacstion?: Transaction;
     isFetchSucceed?: boolean;
@@ -19,8 +21,11 @@ export class TransactionController implements ITransactionStore {
         makeAutoObservable(this);
     }
 
-    async addTransaction(customer: Transaction): Promise<void> {
-        const newTransaction: AxiosResponse<Transaction> = await TransactionService.saveTransaction(customer);
+    async addTransaction(product: Product, transaction: Transaction): Promise<void> {
+        const newProductResponse: AxiosResponse<Product> = await ProductService.saveProduct(product);
+        const newProduct = newProductResponse.data;
+        transaction.PRODUCT_ID = newProduct.ID;
+        const newTransaction: AxiosResponse<Transaction> = await TransactionService.saveTransaction(transaction);
         this.newTransaction = newTransaction.data;
     }
 

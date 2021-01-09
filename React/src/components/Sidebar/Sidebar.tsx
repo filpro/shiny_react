@@ -87,7 +87,6 @@ interface Props {
 const Sidebar: React.FC<Props> = (props: Props): JSX.Element => {
     const { window } = props;
     const classes = useStyles();
-    const currentLocation = useLocation().pathname;
     const [mobileOpen, setMobileOpen] = React.useState(false);
 
     const handleDrawerToggle = (open: boolean) => {

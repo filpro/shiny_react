@@ -6,22 +6,16 @@ transactionApiModule = function(input, output, session) {
              if( req$REQUEST_METHOD == "POST" ) {
                 print("POST REQUEST - TRANSACTION")
                 received = req$rook.input$read_lines() %>% fromJSON()
-
-                productId = dataService$addProduct(
-                    ID = NULL,
-                    PRODUCT_NAME = received$PRODUCT_ID
-                )
-
                 result = dataService$addTransaction(
                     CUSTOMER_ID = received$CUSTOMER_ID,
-                    PRODUCT_ID = productId,
+                    PRODUCT_ID = received$PRODUCT_ID,
                     TRANSMISSION_ID = received$TRANSMISSION_ID,
                     PRODUCT_PRICE = received$PRODUCT_PRICE,
                     IS_PAID = FALSE,
                     IS_DELIVERED = FALSE
                 )
 
-                response = dataService$getCustomerById(result) %>% as.list() %>% toJSON(auto_unbox = TRUE)
+                response = dataService$getTransactionById(result) %>% as.list() %>% toJSON(auto_unbox = TRUE)
                 shiny:::httpResponse(200, 'application/json', response)
             }
         }
@@ -43,7 +37,6 @@ transactionApiModule = function(input, output, session) {
         filter = function(data, req) {
             print("GET REQUEST - GET TRANSACTION BY ID")
             query <- parseQueryString(req$QUERY_STRING)
-            print(query)
             dateFrom = query$dateFrom
             dateTo = query$dateTo
             filteredTransactions = dataService$getAllTransactions()[TRANSMISSION_ID >= dateFrom & TRANSMISSION_ID <= dateTo]
@@ -54,10 +47,57 @@ transactionApiModule = function(input, output, session) {
         }
     )
 
+    transactionApiUpdate = session$registerDataObj(
+        name = 'transaction-api-update',
+        data = list(),
+        filter = function(data, req) {
+             if( req$REQUEST_METHOD == "POST" ) {
+                print("POST REQUEST - UPDATE TRANSACTION")
+                received = req$rook.input$read_lines() %>% fromJSON()
+                result = dataService$addTransaction(
+                    CUSTOMER_ID = received$CUSTOMER_ID,
+                    PRODUCT_ID = received$PRODUCT_ID,
+                    TRANSMISSION_ID = received$TRANSMISSION_ID,
+                    PRODUCT_PRICE = received$PRODUCT_PRICE,
+                    IS_PAID = received$IS_PAID,
+                    IS_DELIVERED = received$IS_DELIVERED,
+                    update_id = received$ID
+                )
+                response = dataService$getTransactionById(result) %>% as.list() %>% toJSON(auto_unbox = TRUE)
+                shiny:::httpResponse(200, 'application/json', response)
+            }
+        }
+    )
+
+    transactionApiDelete = session$registerDataObj(
+        name = 'transaction-api-delete',
+        data = list(),
+        filter = function(data, req) {
+             if( req$REQUEST_METHOD == "POST" ) {
+                print("POST REQUEST - DELETE TRANSACTION")
+                received = req$rook.input$read_lines() %>% fromJSON()
+                object = data.table(
+                    CUSTOMER_ID = received$CUSTOMER_ID,
+                    PRODUCT_ID = received$PRODUCT_ID,
+                    TRANSMISSION_ID = received$TRANSMISSION_ID,
+                    PRODUCT_PRICE = received$PRODUCT_PRICE,
+                    IS_PAID = received$IS_PAID,
+                    IS_DELIVERED = received$IS_DELIVERED,
+                    IS_DELETED = TRUE
+                )
+                result = dataService$addRow("transactions", object, prefix = "T", update_id = received$ID)
+                response = received$ID
+                shiny:::httpResponse(200, 'application/json', response)
+            }
+        }
+    )
+
     session$sendCustomMessage('transactionApi', list(
         transactionApiAddNew = transactionApiAddNew,
         transactionApiGetAll = transactionApiGetAll,
-        transactionApiGetByDates = transactionApiGetByDates
+        transactionApiGetByDates = transactionApiGetByDates,
+        transactionApiUpdate = transactionApiUpdate,
+        transactionApiDelete = transactionApiDelete
     ))
 
 }

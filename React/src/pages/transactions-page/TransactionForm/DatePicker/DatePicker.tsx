@@ -21,6 +21,7 @@ const DatePicker: React.FC<IProps> = (props: IProps): JSX.Element => {
                 label="Data transmisji"
                 value={props.date}
                 onChange={(e) => props.handleDateChange(e)}
+                autoOk
                 KeyboardButtonProps={{
                     'aria-label': 'change date',
                 }}

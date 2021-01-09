@@ -2,20 +2,20 @@ import { TextField } from '@material-ui/core';
 import React from 'react';
 
 interface IProps {
-    productId: string;
-    handleProductIdChange(id: string): void;
+    productName: string;
+    handleProductNameChange(id: string): void;
 }
 
-const ProductId: React.FC<IProps> = (props: IProps): JSX.Element => {
+const ProductName: React.FC<IProps> = (props: IProps): JSX.Element => {
     return (
         <TextField
             id="standard-basic"
-            value={props.productId}
-            onChange={(e) => props.handleProductIdChange(e.target.value)}
+            value={props.productName}
+            onChange={(e) => props.handleProductNameChange(e.target.value)}
             autoComplete="off"
             label="Numer produktu"
         />
     );
 };
 
-export default ProductId;
+export default ProductName;

@@ -78,6 +78,18 @@ DataService$set("public","getCustomerById",function(id){
   return(result)
 })
 
+DataService$set("public","getTransactionById",function(id){
+  result = self$getAllTransactions()[ID %in% id]
+  if(nrow(result)==0) result = NA
+  return(result)
+})
+
+DataService$set("public","getProductById",function(id){
+  result = self$getAllProducts()[ID %in% id]
+  if(nrow(result)==0) result = NA
+  return(result)
+})
+
 
 DataService$set("public","addRow", function(table_name, object, prefix = "", update_id = NA, to_upper = TRUE) {
   #browser()
@@ -92,10 +104,8 @@ DataService$set("public","addRow", function(table_name, object, prefix = "", upd
 
   object$DATE_MODIFIED = Sys.time() %>% as.character()
   
-  
-  print(update_id)
   if(is.na(update_id)){
-    object$IS_DELETED = 0
+    object$IS_DELETED = FALSE
     object$DATE_CREATED = Sys.time() %>% as.character() 
     
     if("ID" %in% colnames(object)){
@@ -129,7 +139,6 @@ DataService$set("public","addRow", function(table_name, object, prefix = "", upd
   
   #browser()
   query = sqlAppendTable(conn, table_name, object %>% as.data.frame())
-  print(query)
   # query = paste0(
   #   "INSERT INTO ",table_name, " ('",paste0(c("ID",object %>% colnames(),"DATE_CREATED","IS_DELETED","DATE_MODIFIED"), collapse = "','"),
   #   "') VALUES ('", c(id,object %>% as.matrix(),creation_date ,is_deleted,modification_date) %>% paste0(collapse = "','"),"')")
@@ -205,7 +214,7 @@ DataService$set("public","prepareData", function(){
     FIRST_NAME = randomNames::randomNames(c_n, which.names = "first"),
     LAST_NAME = randomNames::randomNames(c_n, which.names = "last"),
     DATE_CREATED = Sys.time() %>% as.character(),
-    IS_DELETED = 0,
+    IS_DELETED = FALSE,
     DATE_MODIFIED = Sys.time() %>% as.character(),
     AUTHOR = "test.skrypt@gmail.com"
   ) %>% dfToUpper()
@@ -214,16 +223,18 @@ DataService$set("public","prepareData", function(){
     ID = format(dates,"%Y-%m-%d"),
     TRANSMISSION_DATE = dates %>% as.character(),
     DATE_CREATED = Sys.time() %>% as.character(),
-    IS_DELETED = 0,
+    IS_DELETED = FALSE,
     DATE_MODIFIED = Sys.time() %>% as.character(),
     AUTHOR = "test.skrypt@gmail.com"
   )
   
+  product_ids = private$setId(n=p_n, prefix = "P")
+
   products_tbl = data.table(
-    ID = private$setId(n=p_n, prefix = "P"),
-    PRODUCT_NAME = "",
+    ID =product_ids,
+    PRODUCT_NAME = product_ids,
     DATE_CREATED = Sys.time() %>% as.character(),
-    IS_DELETED = 0,
+    IS_DELETED = FALSE,
     DATE_MODIFIED = Sys.time() %>% as.character(),
     AUTHOR = "test.skrypt@gmail.com"
   )
@@ -235,10 +246,10 @@ DataService$set("public","prepareData", function(){
     PRODUCT_ID = sample(products_tbl$ID, tn_n,replace = TRUE),
     TRANSMISSION_ID = sample(transmissions_tbl$ID,tn_n,replace = TRUE),
     PRODUCT_PRICE = runif(tn_n,1,5) %>% round(),
-    IS_PAID = 0,
-    IS_DELIVERED = 0,
+    IS_PAID = sample(size = tn_n, c(TRUE, FALSE), replace = TRUE),
+    IS_DELIVERED = sample(size = tn_n, c(TRUE, FALSE), replace = TRUE),
     DATE_CREATED = Sys.time() %>% as.character(),
-    IS_DELETED = 0,
+    IS_DELETED = FALSE,
     DATE_MODIFIED = Sys.time() %>% as.character(),
     AUTHOR = "test.skrypt@gmail.com"
   ) 

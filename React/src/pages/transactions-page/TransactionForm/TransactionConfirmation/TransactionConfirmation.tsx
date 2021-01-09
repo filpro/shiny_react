@@ -47,12 +47,12 @@ const TransactionConfirmation: React.FC<IProps> = (props: IProps): JSX.Element =
     const handleConfirmed = () => {
         props.handleHasConfirmed();
         handleClose();
-    }
+    };
 
     const { FIRST_NAME, LAST_NAME } = props.clientSelected;
 
     const transactionInfo = [
-        { value: props.transactionDate === null ? '' : props.transactionDate.toLocaleDateString("pl-PL"), label: 'Data transakcji' },
+        { value: props.transactionDate === null ? '' : props.transactionDate.toLocaleDateString('pl-PL'), label: 'Data transakcji' },
         { value: props.productId, label: 'ID produktu:' },
         { value: props.clientSelected === null ? '' : `${FIRST_NAME} ${LAST_NAME}`, label: 'Nazwa klienta:' },
         { value: props.productPrice, label: 'Cena:' },

@@ -1,17 +1,17 @@
 class Product {
-    ID: string;
+    ID?: string;
 
     PRODUCT_NAME: string;
 
-    DATE_CREATED: Date;
+    DATE_CREATED?: Date;
 
-    IS_DELETED: boolean;
+    IS_DELETED?: boolean;
 
-    DATE_MODIFIED: Date;
+    DATE_MODIFIED?: Date;
 
-    AUTHOR: string;
+    AUTHOR?: string;
 
-    constructor(ID: string, PRODUCT_NAME: string, IS_DELETED: boolean, DATE_CREATED: Date, DATE_MODIFIED: Date, AUTHOR: string) {
+    constructor(PRODUCT_NAME: string, ID?: string, IS_DELETED?: boolean, DATE_CREATED?: Date, DATE_MODIFIED?: Date, AUTHOR?: string) {
         this.ID = ID;
         this.PRODUCT_NAME = PRODUCT_NAME;
         this.DATE_CREATED = DATE_CREATED;

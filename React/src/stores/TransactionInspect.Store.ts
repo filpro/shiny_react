@@ -22,6 +22,10 @@ interface ITransactionStore {
     setCustomerIdsFilter(customers: Customer[], changeReason: string): void;
     productIdsFilter?: Product[];
     setProductIdsFilter(products: Product[], changeReason: string): void;
+    getLocalFilteredCustomerById(id: string): Customer | undefined;
+    getLocalFilteredProductById(id: string): Product | undefined;
+    updateTransaction(transaction: Transaction): Promise<void>;
+    deleteTransaction(transaction: Transaction): Promise<string>;
 }
 
 export class TransactionController implements ITransactionStore {
@@ -63,6 +67,28 @@ export class TransactionController implements ITransactionStore {
         this.updateCustomerDropdownList();
     };
 
+    async updateTransaction(transaction: Transaction): Promise<void> {
+        const response = await TransactionService.updateTransaction(transaction);
+        const updatedTransaction = response.data;
+
+        const outdatedLocalTransactionIndex = this.localFilteredTransactions?.findIndex((x) => x.ID === updatedTransaction.ID);
+        if (this.localFilteredTransactions && outdatedLocalTransactionIndex !== undefined) {
+            this.localFilteredTransactions[outdatedLocalTransactionIndex] = updatedTransaction;
+        }
+        const outdatedServerTransactionIndex = this.serverFilteredTransactions?.findIndex((x) => x.ID === updatedTransaction.ID);
+        if (this.serverFilteredTransactions && outdatedServerTransactionIndex !== undefined) {
+            this.serverFilteredTransactions[outdatedServerTransactionIndex] = updatedTransaction;
+        }
+    }
+
+    async deleteTransaction(transaction: Transaction): Promise<string> {
+        const response = await TransactionService.deleteTransaction(transaction);
+        const deletedTransactionId = response.data;
+
+        this.getServerFilteredData();
+        return deletedTransactionId;
+    }
+
     applyLocalFilter = (): void => {
         this.localFilteredTransactions = this.serverFilteredTransactions?.filter((x) => {
             // eslint-disable-next-line no-nested-ternary
@@ -73,12 +99,6 @@ export class TransactionController implements ITransactionStore {
                 (isValidProductFilter ? this.productIdsFilter?.map((product) => product.ID).includes(x.PRODUCT_ID) : true)
             );
         });
-    };
-
-    updateCustomerDropdownList2 = (): void => {
-        const filteredCustomerIds = this.localFilteredTransactions?.map((x) => x.CUSTOMER_ID);
-        const uniqueFilteredCustomerIds = filteredCustomerIds?.filter((x, i, a) => a.indexOf(x) === i);
-        this.localFilteredCustomers = this.serverFilteredCustomers?.filter((customer) => uniqueFilteredCustomerIds?.includes(customer.ID));
     };
 
     updateCustomerDropdownList = (): void => {
@@ -94,12 +114,6 @@ export class TransactionController implements ITransactionStore {
         }
     };
 
-    updateProductDropdownList2 = (): void => {
-        const filteredProductIds = this.localFilteredTransactions?.map((x) => x.PRODUCT_ID);
-        const uniqueFilteredProductIds = filteredProductIds?.filter((x, i, a) => a.indexOf(x) === i);
-        this.localFilteredProducts = this.serverFilteredProducts?.filter((product) => uniqueFilteredProductIds?.includes(product.ID));
-    };
-
     updateProductDropdownList = (): void => {
         const isValidCustomerFilter = this.customerIdsFilter !== undefined && this.customerIdsFilter !== null && this.customerIdsFilter.length !== 0;
         if (isValidCustomerFilter) {
@@ -111,6 +125,14 @@ export class TransactionController implements ITransactionStore {
         } else {
             this.localFilteredProducts = this.serverFilteredProducts;
         }
+    };
+
+    getLocalFilteredCustomerById = (id: string): Customer | undefined => {
+        return this.localFilteredCustomers ? this.localFilteredCustomers?.find((customer) => customer.ID === id) : undefined;
+    };
+
+    getLocalFilteredProductById = (id: string): Product | undefined => {
+        return this.localFilteredProducts ? this.localFilteredProducts?.find((product) => product.ID === id) : undefined;
     };
 
     serverFilteredTransactions?: Transaction[];
