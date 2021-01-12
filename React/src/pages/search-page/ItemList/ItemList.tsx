@@ -27,7 +27,6 @@ import AttachMoney from '@material-ui/icons/AttachMoney';
 import MoneyOff from '@material-ui/icons/MoneyOff';
 import ArrowForward from '@material-ui/icons/ArrowForward';
 import Delete from '@material-ui/icons/Delete';
-import { Alert } from '@material-ui/lab';
 import InspectTransactionStore from '../../../stores/TransactionInspect.Store';
 
 const useStyles = makeStyles(() =>
@@ -106,7 +105,7 @@ interface IItemMenuProps {
     handleDeliveryStatusChange(): void;
     handlePaymentStatusChange(): void;
     handleDeleteTransaction(): void;
-    handleClose();
+    handleClose(): void;
     isPaid?: boolean;
     paymentStatusLabel: string;
     paymentStatusIcon: JSX.Element;
@@ -156,7 +155,7 @@ const Row = observer(
         const transaction = data[index];
         const customer = inspectTransactionsStore?.getLocalFilteredCustomerById(transaction.CUSTOMER_ID);
         const product = inspectTransactionsStore?.getLocalFilteredProductById(transaction.PRODUCT_ID);
-        const [checked, setChecked] = React.useState(true);
+        const [checked] = React.useState(true);
 
         const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 

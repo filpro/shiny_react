@@ -3,6 +3,7 @@ import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/picker
 import React, { useContext } from 'react';
 import { observer } from 'mobx-react';
 import { createStyles, Grid, makeStyles } from '@material-ui/core';
+import plLocale from 'date-fns/locale/pl';
 import InspectTransactionStore from '../../../../stores/TransactionInspect.Store';
 
 const useStyles = makeStyles(() =>
@@ -20,7 +21,7 @@ const DateRange: React.FC = observer(
         return (
             <>
                 <Grid item xs={6} sm={6} md={6} lg={6} xl={6} className={classes.dateRange}>
-                    <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                    <MuiPickersUtilsProvider utils={DateFnsUtils} locale={plLocale}>
                         <KeyboardDatePicker
                             disableToolbar
                             variant="inline"
@@ -39,7 +40,7 @@ const DateRange: React.FC = observer(
                     </MuiPickersUtilsProvider>
                 </Grid>
                 <Grid item xs={6} sm={6} md={6} lg={6} xl={6} className={classes.dateRange}>
-                    <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                    <MuiPickersUtilsProvider utils={DateFnsUtils} locale={plLocale}>
                         <KeyboardDatePicker
                             disableToolbar
                             variant="inline"

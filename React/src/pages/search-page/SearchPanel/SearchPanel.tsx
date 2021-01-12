@@ -26,6 +26,7 @@ const SearchPanel: React.FC = observer(
     (): JSX.Element => {
         const inspectTransactionsStore = useContext(InspectTransactionStore);
         const classes = useStyles();
+
         return (
             <div className={classes.root}>
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
@@ -33,15 +34,34 @@ const SearchPanel: React.FC = observer(
                 </Grid>
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                     <FilterSelect
-                        label="Nazwa klienta"
-                        options={inspectTransactionsStore.localFilteredCustomers}
-                        filter={inspectTransactionsStore.customerIdsFilter}
-                        optionLabel={(option: Customer) => (option === null ? '' : `${option.FIRST_NAME} ${option.LAST_NAME} (${option.ID})`)}
+                        label="Data transmisji"
+                        options={inspectTransactionsStore.localFilteredDates}
+                        filter={inspectTransactionsStore.transmissionDatesFilter}
+                        optionLabel={(option: Date) => (option === null ? '' : `${option}`)}
                         renderOption={(option) => {
                             return (
                                 <>
                                     <div>
-                                        {`${option.FIRST_NAME} ${option.LAST_NAME} (${option.ID})`}
+                                        {`${option}`}
+                                        <Divider />
+                                    </div>
+                                </>
+                            );
+                        }}
+                        changeHandler={inspectTransactionsStore.setTransmissionDatesFilter}
+                    />
+                </Grid>
+                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                    <FilterSelect
+                        label="Nazwa klienta"
+                        options={inspectTransactionsStore.localFilteredCustomers}
+                        filter={inspectTransactionsStore.customerIdsFilter}
+                        optionLabel={(option: Customer) => (option === null ? '' : `${option.FIRST_NAME} ${option.LAST_NAME}`)}
+                        renderOption={(option) => {
+                            return (
+                                <>
+                                    <div>
+                                        {`${option.FIRST_NAME} ${option.LAST_NAME}`}
                                         <Divider />
                                     </div>
                                 </>
@@ -55,12 +75,12 @@ const SearchPanel: React.FC = observer(
                         label="Numer produktu"
                         options={inspectTransactionsStore.localFilteredProducts}
                         filter={inspectTransactionsStore.productIdsFilter}
-                        optionLabel={(option: Product) => (option === null ? '' : `${option.ID} (${option.PRODUCT_NAME})`)}
+                        optionLabel={(option: Product) => (option === null ? '' : `${option.PRODUCT_NAME}`)}
                         renderOption={(option) => {
                             return (
                                 <>
                                     <div className={classes.text}>
-                                        {`${option.ID} (${option.PRODUCT_NAME})`}
+                                        {`${option.PRODUCT_NAME}`}
                                         <Divider />
                                     </div>
                                 </>

@@ -13,11 +13,13 @@ interface ITransactionStore {
     localFilteredCustomers?: Customer[];
     serverFilteredProducts?: Product[];
     localFilteredProducts?: Product[];
+    localFilteredDates?: Date[];
     dateFrom: Date;
     setDateFrom(dateFrom: Date | null): void;
     dateTo: Date;
     setDateTo(dateTo: Date | null): void;
     transmissionDatesFilter?: Date[];
+    setTransmissionDatesFilter(dates: Date[]): void;
     customerIdsFilter?: Customer[];
     setCustomerIdsFilter(customers: Customer[], changeReason: string): void;
     productIdsFilter?: Product[];
@@ -41,6 +43,7 @@ export class TransactionController implements ITransactionStore {
         this.applyLocalFilter();
         this.updateCustomerDropdownList();
         this.updateProductDropdownList();
+        this.updateDatesDropdownList();
     }
 
     setDateFrom(dateFrom: Date): void {
@@ -58,6 +61,7 @@ export class TransactionController implements ITransactionStore {
         this.applyLocalFilter();
         this.updateCustomerDropdownList();
         this.updateProductDropdownList();
+        this.updateDatesDropdownList();
     };
 
     setCustomerIdsFilter = (customers: Customer[] | []): void => {
@@ -65,6 +69,15 @@ export class TransactionController implements ITransactionStore {
         this.applyLocalFilter();
         this.updateProductDropdownList();
         this.updateCustomerDropdownList();
+        this.updateDatesDropdownList();
+    };
+
+    setTransmissionDatesFilter = (dates: Date[]): void => {
+        this.transmissionDatesFilter = dates;
+        this.applyLocalFilter();
+        this.updateProductDropdownList();
+        this.updateCustomerDropdownList();
+        this.updateDatesDropdownList();
     };
 
     async updateTransaction(transaction: Transaction): Promise<void> {
@@ -94,37 +107,82 @@ export class TransactionController implements ITransactionStore {
             // eslint-disable-next-line no-nested-ternary
             const isValidCustomerFilter = this.customerIdsFilter !== undefined && this.customerIdsFilter !== null && this.customerIdsFilter.length !== 0;
             const isValidProductFilter = this.productIdsFilter !== undefined && this.productIdsFilter !== null && this.productIdsFilter.length !== 0;
+            const isValidTransmissionDatesFilter =
+                this.transmissionDatesFilter !== undefined && this.transmissionDatesFilter !== null && this.transmissionDatesFilter.length !== 0;
             return (
                 (isValidCustomerFilter ? this.customerIdsFilter?.map((customer) => customer.ID).includes(x.CUSTOMER_ID) : true) &&
-                (isValidProductFilter ? this.productIdsFilter?.map((product) => product.ID).includes(x.PRODUCT_ID) : true)
+                (isValidProductFilter ? this.productIdsFilter?.map((product) => product.ID).includes(x.PRODUCT_ID) : true) &&
+                (isValidTransmissionDatesFilter ? this.transmissionDatesFilter?.includes(x.TRANSMISSION_ID) : true)
             );
         });
     };
 
     updateCustomerDropdownList = (): void => {
         const isValidProductFilter = this.productIdsFilter !== undefined && this.productIdsFilter !== null && this.productIdsFilter.length !== 0;
-        if (isValidProductFilter) {
+        const isValidTransactionDatesFilter =
+            this.transmissionDatesFilter !== undefined && this.transmissionDatesFilter !== null && this.transmissionDatesFilter.length !== 0;
+
+        if (isValidProductFilter || isValidTransactionDatesFilter) {
             const filteredCustomerIds = this.serverFilteredTransactions
-                ?.filter((transaction) => this.productIdsFilter?.map((product) => product.ID).includes(transaction.PRODUCT_ID))
+                ?.filter(
+                    (transaction) =>
+                        (isValidProductFilter ? this.productIdsFilter?.map((product) => product.ID).includes(transaction.PRODUCT_ID) : true) &&
+                        (isValidTransactionDatesFilter ? this.transmissionDatesFilter?.includes(transaction.TRANSMISSION_ID) : true)
+                )
                 .map((transaction) => transaction.CUSTOMER_ID);
             const uniqueFilteredCustomerIds = filteredCustomerIds?.filter((x, i, a) => a.indexOf(x) === i);
+
             this.localFilteredCustomers = this.serverFilteredCustomers?.filter((customer) => uniqueFilteredCustomerIds?.includes(customer.ID));
         } else {
             this.localFilteredCustomers = this.serverFilteredCustomers;
         }
+        this.localFilteredCustomers = this.localFilteredCustomers?.sort((cust1, cust2) => (cust1.FIRST_NAME > cust2.FIRST_NAME ? 1 : -1));
     };
 
     updateProductDropdownList = (): void => {
         const isValidCustomerFilter = this.customerIdsFilter !== undefined && this.customerIdsFilter !== null && this.customerIdsFilter.length !== 0;
-        if (isValidCustomerFilter) {
+        const isValidTransactionDatesFilter =
+            this.transmissionDatesFilter !== undefined && this.transmissionDatesFilter !== null && this.transmissionDatesFilter.length !== 0;
+
+        if (isValidCustomerFilter || isValidTransactionDatesFilter) {
             const filteredProductIds = this.serverFilteredTransactions
-                ?.filter((transaction) => this.customerIdsFilter?.map((customer) => customer.ID).includes(transaction.CUSTOMER_ID))
+                ?.filter(
+                    (transaction) =>
+                        (isValidCustomerFilter ? this.customerIdsFilter?.map((customer) => customer.ID).includes(transaction.CUSTOMER_ID) : true) &&
+                        (isValidTransactionDatesFilter ? this.transmissionDatesFilter?.includes(transaction.TRANSMISSION_ID) : true)
+                )
                 .map((transaction) => transaction.PRODUCT_ID);
             const uniqueFilteredProductIds = filteredProductIds?.filter((x, i, a) => a.indexOf(x) === i);
+
             this.localFilteredProducts = this.serverFilteredProducts?.filter((product) => uniqueFilteredProductIds?.includes(product.ID));
         } else {
             this.localFilteredProducts = this.serverFilteredProducts;
         }
+
+        this.localFilteredProducts = this.localFilteredProducts?.sort((prod1, prod2) => (prod1.PRODUCT_NAME > prod2.PRODUCT_NAME ? 1 : -1));
+    };
+
+    updateDatesDropdownList = (): void => {
+        const isValidCustomerFilter = this.customerIdsFilter !== undefined && this.customerIdsFilter !== null && this.customerIdsFilter.length !== 0;
+        const isValidProductFilter = this.productIdsFilter !== undefined && this.productIdsFilter !== null && this.productIdsFilter.length !== 0;
+
+        if (isValidCustomerFilter || isValidProductFilter) {
+            this.localFilteredDates = this.serverFilteredTransactions
+                ?.filter(
+                    (transaction) =>
+                        (isValidCustomerFilter ? this.customerIdsFilter?.map((customer) => customer.ID).includes(transaction.CUSTOMER_ID) : true) &&
+                        (isValidProductFilter ? this.productIdsFilter?.map((product) => product.ID).includes(transaction.PRODUCT_ID) : true)
+                )
+                .map((transaction) => transaction.TRANSMISSION_ID)
+                .filter((x, i, a) => a.indexOf(x) === i);
+        } else {
+            this.localFilteredDates = this.serverFilteredTransactions
+                ?.map((transaction) => transaction.TRANSMISSION_ID)
+                .filter((x, i, a) => a.indexOf(x) === i);
+        }
+
+        this.localFilteredDates = this.localFilteredDates?.sort((date1, date2) => (date1 > date2 ? 1 : -1));
+
     };
 
     getLocalFilteredCustomerById = (id: string): Customer | undefined => {
@@ -146,6 +204,8 @@ export class TransactionController implements ITransactionStore {
     serverFilteredProducts?: Product[];
 
     localFilteredProducts?: Product[];
+
+    localFilteredDates?: Date[];
 
     dateFrom!: Date;
 
