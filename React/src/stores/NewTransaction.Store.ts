@@ -11,21 +11,25 @@ interface ITransactionStore {
     addTransaction(product: Product, transaction: Transaction): Promise<void>;
     allTransactions?: Transaction[];
     newTransacstion?: Transaction;
+    checkingIfTransactionExistsForProductName?: boolean;
+    doesTransactionExistForProductName?: boolean;
     isFetchSucceed?: boolean;
     httpStatus?: number;
+    checkIfExistsTransaction(productName?: string, transactionDate?: Date | null): Promise<void>;
 }
 
 export class TransactionController implements ITransactionStore {
     constructor() {
-        this.loadAllTransactions();
+        if (TransactionService.serviceReady) this.loadAllTransactions();
         makeAutoObservable(this);
     }
 
     async addTransaction(product: Product, transaction: Transaction): Promise<void> {
         const newProductResponse: AxiosResponse<Product> = await ProductService.saveProduct(product);
         const newProduct = newProductResponse.data;
-        transaction.PRODUCT_ID = newProduct.ID;
-        const newTransaction: AxiosResponse<Transaction> = await TransactionService.saveTransaction(transaction);
+        const tempTransaction = { ...transaction };
+        tempTransaction.PRODUCT_ID = newProduct.ID;
+        const newTransaction: AxiosResponse<Transaction> = await TransactionService.saveTransaction(tempTransaction);
         this.newTransaction = newTransaction.data;
     }
 
@@ -35,6 +39,17 @@ export class TransactionController implements ITransactionStore {
         this.allTransactions = response.data;
     }
 
+    async checkIfExistsTransaction(productName?: string, transactionDate?: Date | null): Promise<void> {
+        if (productName && transactionDate) {
+            this.checkingIfTransactionExistsForProductName = true;
+            const serverResponse: AxiosResponse<boolean> = await ProductService.checkIfExistsTransaction(productName, transactionDate);
+            this.doesTransactionExistForProductName = serverResponse ? serverResponse.data : undefined;
+            this.checkingIfTransactionExistsForProductName = false;
+        } else {
+            this.doesTransactionExistForProductName = false;
+        }
+    }
+
     newTransaction?: Transaction;
 
     allTransactions?: Transaction[];
@@ -42,6 +57,10 @@ export class TransactionController implements ITransactionStore {
     isFetchSucceed?: boolean | undefined;
 
     httpStatus?: number | undefined;
+
+    doesTransactionExistForProductName?: boolean;
+
+    checkingIfTransactionExistsForProductName?: boolean;
 }
 
 export default createContext<ITransactionStore>(new TransactionController());

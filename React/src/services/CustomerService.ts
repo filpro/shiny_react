@@ -11,9 +11,12 @@ export interface CustomerApi {
 class CustomerService {
     apiUrls?: CustomerApi;
 
+    serviceReady = false;
+
     /** Sets an API for managing customers */
     setApiUrl(urls: CustomerApi) {
         this.apiUrls = urls;
+        this.serviceReady = true;
     }
 
     saveCustomer = async (customer: Customer): Promise<AxiosResponse<Customer>> => {

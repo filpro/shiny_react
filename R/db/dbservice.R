@@ -2,6 +2,7 @@ library(R6)
 library(data.table)
 library(DBI)
 
+
 DataService = R6Class(
   cloneable = FALSE,
   public = list(
@@ -96,8 +97,7 @@ DataService$set("public","addRow", function(table_name, object, prefix = "", upd
   if(to_upper){
     object = dfToUpper(object)
   }
-  conn <- poolCheckout(private$pool)
-  dbBegin(conn)
+  conn <- pool
   
   table_ref = self$getTable(table_name)[,-c("INT_ID")]
   ids = table_ref$ID
@@ -145,8 +145,8 @@ DataService$set("public","addRow", function(table_name, object, prefix = "", upd
   
   if(self$getTable(table_name)[ID %in% id] %>% nrow() == 0 | !is.na(update_id)){
     dbExecute(conn, query)
-    dbCommit(conn)   # or dbRollback(conn) if something went wrong
-    poolReturn(conn)
+    #dbCommit(conn)   # or dbRollback(conn) if something went wrong
+    #poolReturn(conn)
     print(paste0("Added/updated: ", paste0(id, collapse = ", ")))
     return(id)
   } else {

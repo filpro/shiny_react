@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
 import { hot } from 'react-hot-loader';
-import { Grid, createStyles, makeStyles, Theme, Container, Paper } from '@material-ui/core';
+import { createStyles, makeStyles, Theme, Container } from '@material-ui/core';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import AppRouter from './components/Router/AppRouter';
 import Sidebar from './components/Sidebar/Sidebar';
@@ -9,6 +9,8 @@ import CustomerService, { CustomerApi } from './services/CustomerService';
 import TransactionService, { TransactionApi } from './services/TransactionService';
 import IWindow from './utils/IWindow';
 import ProductService, { ProductApi } from './services/ProductService';
+import TransactionInspect, { TransactionController } from './stores/TransactionInspect.Store';
+import UpdateTrigger from './components/UpdateTrigger/UpdateTrigger';
 
 declare let window: IWindow;
 
@@ -29,7 +31,6 @@ const App: React.FC = (): JSX.Element => {
     const [isProductApiLoaded, setIsProductApiLoaded] = useState(false);
     const [isShinyConnected, setIsShinyConnected] = useState(false);
     const [progress, setProgress] = useState(0);
-
     const classes = useStyles();
 
     useEffect(() => {
@@ -63,11 +64,14 @@ const App: React.FC = (): JSX.Element => {
 
     const appContent: JSX.Element = (
         <header className="App-header">
-            <Sidebar>
-                <Container className={classes.gridcontainer}>
-                    {isInitialized ? <AppRouter /> : <LinearProgress variant="determinate" value={progress} />}
-                </Container>
-            </Sidebar>
+            <TransactionInspect.Provider value={new TransactionController()}>
+                <UpdateTrigger />
+                <Sidebar>
+                    <Container className={classes.gridcontainer}>
+                        {isInitialized ? <AppRouter /> : <LinearProgress variant="determinate" value={progress} />}
+                    </Container>
+                </Sidebar>
+            </TransactionInspect.Provider>
         </header>
     );
 

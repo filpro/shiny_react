@@ -14,8 +14,11 @@ export interface TransactionApi {
 class TransactionService {
     apiUrls?: TransactionApi;
 
+    serviceReady = false;
+
     setApiUrl(urls: TransactionApi) {
         this.apiUrls = urls;
+        this.serviceReady = true;
     }
 
     async saveTransaction(transaction: Transaction): Promise<AxiosResponse<Transaction>> {

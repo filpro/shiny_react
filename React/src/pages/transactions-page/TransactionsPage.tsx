@@ -1,7 +1,7 @@
 import React from 'react';
 import { makeStyles, Theme, createStyles, Paper, Grid } from '@material-ui/core';
 import TransactionForm from './TransactionForm/TransactionForm';
-import NewCustomerStore, { CustomerController } from '../../stores/NewCustomer.Store';
+import NewCustomerStore, { CustomerController } from '../../stores/Customer.Store';
 import NewTransactionStore, { TransactionController } from '../../stores/NewTransaction.Store';
 
 const useStyles = makeStyles((theme: Theme) =>

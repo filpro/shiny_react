@@ -5,17 +5,20 @@ transactionApiModule = function(input, output, session) {
         filter = function(data, req) {
              if( req$REQUEST_METHOD == "POST" ) {
                 print("POST REQUEST - TRANSACTION")
+
                 received = req$rook.input$read_lines() %>% fromJSON()
                 result = dataService$addTransaction(
                     CUSTOMER_ID = received$CUSTOMER_ID,
                     PRODUCT_ID = received$PRODUCT_ID,
-                    TRANSMISSION_ID = received$TRANSMISSION_ID,
+                    TRANSMISSION_ID = as.Date(received$TRANSMISSION_ID) %>% as.character(),
                     PRODUCT_PRICE = received$PRODUCT_PRICE,
                     IS_PAID = FALSE,
                     IS_DELIVERED = FALSE
                 )
 
                 response = dataService$getTransactionById(result) %>% as.list() %>% toJSON(auto_unbox = TRUE)
+                refreshDataTrigger(result)
+
                 shiny:::httpResponse(200, 'application/json', response)
             }
         }
@@ -91,6 +94,10 @@ transactionApiModule = function(input, output, session) {
             }
         }
     )
+
+    refreshDataTrigger = function(message) {
+        session$sendCustomMessage('refreshDataTrigger',message)
+    }
 
     session$sendCustomMessage('transactionApi', list(
         transactionApiAddNew = transactionApiAddNew,

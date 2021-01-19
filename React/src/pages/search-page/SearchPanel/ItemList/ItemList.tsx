@@ -27,7 +27,7 @@ import AttachMoney from '@material-ui/icons/AttachMoney';
 import MoneyOff from '@material-ui/icons/MoneyOff';
 import ArrowForward from '@material-ui/icons/ArrowForward';
 import Delete from '@material-ui/icons/Delete';
-import InspectTransactionStore from '../../../stores/TransactionInspect.Store';
+import InspectTransactionStore from '../../../../stores/TransactionInspect.Store';
 
 const useStyles = makeStyles(() =>
     createStyles({
@@ -35,6 +35,7 @@ const useStyles = makeStyles(() =>
             padding: '5px',
             border: '1px solid #d9dddd',
             transition: 'all 500ms ease-in-out',
+            backgroundColor: 'rgba(228,228,228,0.1)',
         },
         textCardGrid: {
             flexWrap: 'wrap',
@@ -189,7 +190,6 @@ const Row = observer(
         const boolToInt = (x: boolean | undefined) => (x ? 1 : 0);
         const paymentStatusProperties = statusProperties.payment[boolToInt(transaction.IS_PAID)];
         const deliveryStatusProperties = statusProperties.delivery[boolToInt(transaction.IS_DELIVERED)];
-
         return (
             <div style={style}>
                 <Zoom in={checked}>
@@ -222,7 +222,9 @@ const Row = observer(
                             <Grid container direction="row" justify="space-between">
                                 <Grid item className={classes.textCardGrid}>
                                     <Typography color="textSecondary" noWrap>{`${customer?.FIRST_NAME} ${customer?.LAST_NAME}`}</Typography>
-                                    <Typography color="textSecondary">{transaction.PRODUCT_PRICE}</Typography>
+                                    <Typography color="textSecondary">
+                                        {new Intl.NumberFormat('pl-PL', { style: 'currency', currency: 'PLN' }).format(transaction.PRODUCT_PRICE)}
+                                    </Typography>
                                 </Grid>
                                 <Grid item>
                                     <Tooltip title={deliveryStatusProperties.message}>
@@ -244,15 +246,11 @@ const Row = observer(
 const ItemList = observer(
     (): JSX.Element => {
         const inspectTransactionsStore = useContext(InspectTransactionStore);
-
+        const items = inspectTransactionsStore.localFilteredTransactions;
+        const itemCount = items ? items.length : 0;
+        const itemSize = 200;
         return inspectTransactionsStore.localFilteredTransactions !== undefined ? (
-            <List
-                height={500}
-                itemCount={inspectTransactionsStore.localFilteredTransactions.length}
-                itemSize={200}
-                itemData={inspectTransactionsStore.localFilteredTransactions}
-                width="100%"
-            >
+            <List height={Math.min(500, itemCount * itemSize)} itemCount={itemCount} itemSize={200} itemData={items} width="100%">
                 {Row}
             </List>
         ) : (

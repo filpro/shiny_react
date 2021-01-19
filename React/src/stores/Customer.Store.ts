@@ -17,7 +17,7 @@ interface ICustomerStore {
 
 export class CustomerController implements ICustomerStore {
     constructor() {
-        this.loadAllCustomers();
+        if (CustomerService.serviceReady) this.loadAllCustomers();
         makeAutoObservable(this);
     }
 

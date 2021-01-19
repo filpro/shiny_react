@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Divider from '@material-ui/core/Divider';
@@ -8,20 +8,15 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import DataUsageIcon from '@material-ui/icons/DataUsage';
 import SearchIcon from '@material-ui/icons/Search';
 import AddBoxIcon from '@material-ui/icons/AddBox';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
-import HomeIcon from '@material-ui/icons/Home';
 import MenuIcon from '@material-ui/icons/Menu';
 import IconButton from '@material-ui/core/IconButton';
-import { isMobile } from 'react-device-detect';
-
-import BottomNavigation from '@material-ui/core/BottomNavigation';
-import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
+import IWindow from '../../utils/IWindow';
 
 const drawerWidth = 240;
 
@@ -41,8 +36,15 @@ const useStyles = makeStyles((theme: Theme) =>
                 width: `calc(100% - ${drawerWidth}px)`,
                 marginLeft: drawerWidth,
             },
+            backgroundColor: 'rgba(54,127,169,1)',
         },
         bottomNavigation: {
+            [theme.breakpoints.up('sm')]: {
+                display: 'none',
+            },
+        },
+        menuButton: {
+            marginRight: theme.spacing(2),
             [theme.breakpoints.up('sm')]: {
                 display: 'none',
             },
@@ -51,6 +53,7 @@ const useStyles = makeStyles((theme: Theme) =>
         toolbar: theme.mixins.toolbar,
         drawerPaper: {
             width: drawerWidth,
+            backgroundColor: 'rgba(34,45,58,1)',
         },
         content: {
             flexGrow: 1,
@@ -61,6 +64,9 @@ const useStyles = makeStyles((theme: Theme) =>
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            fontFamily: 'BRUSHSCI',
+            fontSize: 'xxx-large',
+            textDecoration: 'none',
         },
         stickToBottom: {
             width: '100%',
@@ -70,17 +76,13 @@ const useStyles = makeStyles((theme: Theme) =>
         hiddenObject: {
             display: 'none',
         },
+        menuIcon: {
+            color: 'rgba(184,199,206,1)',
+        },
     })
 );
 
-const routes = [
-    { label: 'Transakcja', link: '/transactions', icon: <AddBoxIcon /> },
-    { label: 'Wyszukaj', link: '/search', icon: <SearchIcon /> },
-    { label: 'Statystyki', link: '/statistics', icon: <DataUsageIcon /> },
-];
-
 interface Props {
-    window?: () => Window;
     children: JSX.Element;
 }
 
@@ -89,16 +91,19 @@ const Sidebar: React.FC<Props> = (props: Props): JSX.Element => {
     const classes = useStyles();
     const [mobileOpen, setMobileOpen] = React.useState(false);
 
+    const routes = [
+        { label: 'Transakcja', link: '/transactions', icon: <AddBoxIcon className={classes.menuIcon} /> },
+        { label: 'Wyszukaj', link: '/search', icon: <SearchIcon className={classes.menuIcon} /> },
+    ];
+
     const handleDrawerToggle = (open: boolean) => {
         setMobileOpen(open);
     };
 
     const drawer = (
         <div>
-            <div role="presentation" className={`${classes.toolbar} ${classes.applogo}`}>
-                <Link to="/dashboard">
-                    <HomeIcon style={{ fontSize: 55 }} />
-                </Link>
+            <div role="presentation" className={`${classes.toolbar} ${classes.applogo}`} style={{ color: 'white' }}>
+                <Typography className={classes.applogo}>Babski kram</Typography>
             </div>
             <Divider />
             <List>
@@ -110,6 +115,7 @@ const Sidebar: React.FC<Props> = (props: Props): JSX.Element => {
                         to={text.link}
                         onClick={() => handleDrawerToggle(false)}
                         onKeyDown={() => handleDrawerToggle(false)}
+                        className={classes.menuIcon}
                     >
                         <ListItemIcon>{text.icon}</ListItemIcon>
                         <ListItemText primary={text.label} />
@@ -127,15 +133,18 @@ const Sidebar: React.FC<Props> = (props: Props): JSX.Element => {
             <CssBaseline />
             <AppBar position="fixed" className={classes.appBar}>
                 <Toolbar disableGutters={false}>
-                    <IconButton color="inherit" aria-label="open drawer" edge="start" onClick={() => handleDrawerToggle(true)} className={classes.menuButton}>
+                    <IconButton
+                        color="inherit"
+                        aria-label="open drawer"
+                        edge="start"
+                        onClick={() => handleDrawerToggle(true)}
+                        className={`${classes.menuButton}`}
+                    >
                         <MenuIcon />
                     </IconButton>
-                    <Typography variant="h6" noWrap>
-                        Responsive drawer
-                    </Typography>
                 </Toolbar>
             </AppBar>
-            <nav className={classes.drawer} aria-label="mailbox folders">
+            <nav className={`${classes.drawer} ${classes.menuIcon}`} aria-label="mailbox folders">
                 {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
                 <Hidden smUp implementation="css">
                     <Drawer

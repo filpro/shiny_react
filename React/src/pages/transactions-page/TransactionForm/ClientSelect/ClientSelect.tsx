@@ -6,7 +6,7 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import { Button, Divider } from '@material-ui/core';
 import ClientAdder from './ClientAdder/ClientAdder';
 import Customer from '../../../../models/Customer';
-import NewCustomerStore from '../../../../stores/NewCustomer.Store';
+import NewCustomerStore from '../../../../stores/Customer.Store';
 
 const ClientSelect: React.FC = observer(
     (): JSX.Element => {

@@ -21,7 +21,7 @@ export default class Transaction {
 
     AUTHOR?: string;
 
-    constructor(customerId: string, transmissionId: string, productPrice: number) {
+    constructor(customerId: string, transmissionId: Date, productPrice: number) {
         this.CUSTOMER_ID = customerId;
         this.TRANSMISSION_ID = transmissionId;
         this.PRODUCT_PRICE = productPrice;

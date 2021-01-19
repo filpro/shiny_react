@@ -31,7 +31,7 @@ interface IProps {
     transactionDate: Date | null;
     productId: string;
     clientSelected: any;
-    productPrice: string;
+    productPrice: string | undefined;
     handleHasConfirmed(): void;
 }
 

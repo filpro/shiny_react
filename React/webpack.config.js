@@ -52,13 +52,18 @@ module.exports = {
         ]
       },
       {
-        test: /\.(eot|woff|svg|woff2|ttf)([\?]?.*)$/,
-        use: ['file-loader'],
+        test: /\.(png|jpe?g|gif|svg|ttf|woff|otf)$/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: '[name].[contenthash].[ext]',
+              outputPath: 'static/img',
+              esModule: false // <- here
+            }
+          }
+        ]
       },
-      {
-        test: /\.(png|woff|woff2|eot|ttf|svg)$/,
-        use: ['url-loader?limit=100000']
-      }
     ]
   },
 

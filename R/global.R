@@ -4,6 +4,7 @@ library(jsonlite)
 library(pool)
 library(magrittr)
 library(dplyr)
+library(DBI)
 
 source("db/dbservice.R")
 # pool = dbPool(
@@ -11,7 +12,7 @@ source("db/dbservice.R")
 #    dbname = file.path(getwd(),"db","db2.sqlite")
 # )
 
-pool = dbPool(
+pool = dbConnect(
   drv = RMariaDB::MariaDB(),
   dbname = "babski_kram_dev",
   host = "192.168.0.88",

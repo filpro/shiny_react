@@ -2,14 +2,19 @@ import DateFnsUtils from '@date-io/date-fns';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
 import React, { useContext } from 'react';
 import { observer } from 'mobx-react';
-import { createStyles, Grid, makeStyles } from '@material-ui/core';
+import { createStyles, Grid, makeStyles, Theme } from '@material-ui/core';
 import plLocale from 'date-fns/locale/pl';
 import InspectTransactionStore from '../../../../stores/TransactionInspect.Store';
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles((theme: Theme) =>
     createStyles({
-        dateRange: {
-            maxWidth: '100%',
+        dateRangeLeft: {
+            width: '100%',
+            paddingRight: theme.spacing(2),
+        },
+        dateRangeRight: {
+            width: '100%',
+            paddingLeft: theme.spacing(2),
         },
     })
 );
@@ -19,8 +24,8 @@ const DateRange: React.FC = observer(
         const inspectTransactionsStore = useContext(InspectTransactionStore);
         const classes = useStyles();
         return (
-            <>
-                <Grid item xs={6} sm={6} md={6} lg={6} xl={6} className={classes.dateRange}>
+            <Grid container justify="space-between">
+                <Grid item xs={6} sm={6} md={6} lg={6} xl={6} className={classes.dateRangeLeft}>
                     <MuiPickersUtilsProvider utils={DateFnsUtils} locale={plLocale}>
                         <KeyboardDatePicker
                             disableToolbar
@@ -39,7 +44,7 @@ const DateRange: React.FC = observer(
                         />
                     </MuiPickersUtilsProvider>
                 </Grid>
-                <Grid item xs={6} sm={6} md={6} lg={6} xl={6} className={classes.dateRange}>
+                <Grid item xs={6} sm={6} md={6} lg={6} xl={6} className={classes.dateRangeRight}>
                     <MuiPickersUtilsProvider utils={DateFnsUtils} locale={plLocale}>
                         <KeyboardDatePicker
                             disableToolbar
@@ -58,7 +63,7 @@ const DateRange: React.FC = observer(
                         />
                     </MuiPickersUtilsProvider>
                 </Grid>
-            </>
+            </Grid>
         );
     }
 );
