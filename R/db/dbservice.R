@@ -5,14 +5,8 @@ library(DBI)
 
 DataService = R6Class(
   cloneable = FALSE,
-  public = list(
-    initialize = function(pool){
-      private$pool = pool
-    }
-  ),
-  private = list(
-    pool = NULL
-  )
+  public = list(),
+  private = list()
 )
 
 dfToUpper = function(df){
@@ -38,7 +32,9 @@ DataService$set("private","setId",function(vec = vector(), n, prefix, date_ref =
 })
 
 DataService$set("public","getTable",function(table_name, show_all = FALSE, show_content = TRUE){
-  result = dbReadTable(private$pool,table_name) %>% as.data.table()
+  result = openCloseConnection(function(con) {
+    dbReadTable(con,table_name) %>% as.data.table()
+  })
   if(!show_all){
     result = result[order(DATE_MODIFIED)] %>% unique(by="ID", fromLast=TRUE)
     result = result[IS_DELETED == 0]
@@ -97,7 +93,9 @@ DataService$set("public","addRow", function(table_name, object, prefix = "", upd
   if(to_upper){
     object = dfToUpper(object)
   }
-  conn <- pool
+  openCloseConnection(function(conn) {
+
+
   
   table_ref = self$getTable(table_name)[,-c("INT_ID")]
   ids = table_ref$ID
@@ -153,7 +151,7 @@ DataService$set("public","addRow", function(table_name, object, prefix = "", upd
     print("This ID already exists in the table! Change ID or update")
     return(id)
   }
-
+  })
 })
 
 

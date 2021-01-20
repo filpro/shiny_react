@@ -11,16 +11,20 @@ source("db/dbservice.R")
 #    drv = RSQLite::SQLite(),
 #    dbname = file.path(getwd(),"db","db2.sqlite")
 # )
+openCloseConnection = function(FUN) {
+  con = dbConnect(
+    drv = RMariaDB::MariaDB(),
+    dbname = "babski_kram_dev",
+    host = "192.168.0.88",
+    username = "root",
+    password = "root"
+  )
+  result = FUN(con)
+  dbDisconnect(con)
+  return(result)
+}
 
-pool = dbConnect(
-  drv = RMariaDB::MariaDB(),
-  dbname = "babski_kram_dev",
-  host = "192.168.0.88",
-  username = "root",
-  password = "root"
-)
-
-dataService = DataService$new(pool)
+dataService = DataService$new()
 user_name = NULL
 
 
