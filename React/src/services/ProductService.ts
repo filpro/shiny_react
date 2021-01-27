@@ -1,12 +1,13 @@
 import axios, { AxiosResponse, CancelTokenStatic, CancelTokenSource } from 'axios';
 import Product from '../models/Product';
+import Observable from '../utils/Observable';
 
 export interface ProductApi {
     productApiAddNew: string;
     productApiCheckIfExistsTransaction: string;
 }
 
-class ProductService {
+class ProductService extends Observable {
     apiUrls?: ProductApi;
 
     cancelToken?: CancelTokenStatic;
@@ -15,6 +16,7 @@ class ProductService {
 
     setApiUrl(urls: ProductApi) {
         this.apiUrls = urls;
+        this.notifyObservers();
     }
 
     async saveProduct(product: Product): Promise<AxiosResponse<Product>> {

@@ -4,13 +4,13 @@ productApiModule = function(input, output, session) {
         data = list(),
         filter = function(data, req) {
              if( req$REQUEST_METHOD == "POST" ) {
-                print("POST REQUEST - PRODUCT")
+                log_info("POST REQUEST - PRODUCT")
                 received = req$rook.input$read_lines() %>% fromJSON()
-                productId = dataService$addProduct(
+                productId = setters_list$addProduct(
                     PRODUCT_NAME = received$PRODUCT_NAME
                 )
 
-                response = dataService$getProductById(productId) %>% as.list() %>% toJSON(auto_unbox = TRUE)
+                response = getters_list$getProductsById(productId) %>% as.list() %>% toJSON(auto_unbox = TRUE)
                 shiny:::httpResponse(200, 'application/json', response)
             }
         }
@@ -23,12 +23,17 @@ productApiModule = function(input, output, session) {
             query <- parseQueryString(req$QUERY_STRING)
             productName = query$productName
             transactionDate = as.Date(query$transactionDate)
-            products = dplyr::tbl(pool, "products")
-            doesExists = (dplyr::tbl(pool, "transactions") %>%
-                filter(TRANSMISSION_ID == transactionDate) %>%
-                dplyr::left_join(products, by = c("PRODUCT_ID" = "ID")) %>%
-                filter(PRODUCT_NAME == productName) %>% summarize(nrows = n()) %>%
-                pull()) > 0
+            oCC = openCloseConnection()
+            doesExists = oCC(function(con){
+                products = dplyr::tbl(con, "products")
+                result = (dplyr::tbl(con, "transactions") %>%
+                    filter(TRANSMISSION_ID == transactionDate) %>%
+                    dplyr::left_join(products, by = c("PRODUCT_ID" = "ID")) %>%
+                    filter(PRODUCT_NAME == productName) %>% summarize(nrows = n()) %>%
+                    pull()) > 0
+                result
+            })
+
             shiny:::httpResponse(200, 'application/json', doesExists %>% toJSON(auto_unbox = TRUE))
         }
 

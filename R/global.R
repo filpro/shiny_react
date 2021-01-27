@@ -5,26 +5,15 @@ library(pool)
 library(magrittr)
 library(dplyr)
 library(DBI)
+library(logger)
+library(purrr)
+library(dbplyr)
 
-source("db/dbservice.R")
-# pool = dbPool(
-#    drv = RSQLite::SQLite(),
-#    dbname = file.path(getwd(),"db","db2.sqlite")
-# )
-openCloseConnection = function(FUN) {
-  con = dbConnect(
-    drv = RMariaDB::MariaDB(),
-    dbname = "babski_kram_dev",
-    host = "192.168.0.88",
-    username = "root",
-    password = "root"
-  )
-  result = FUN(con)
-  dbDisconnect(con)
-  return(result)
-}
 
-dataService = DataService$new()
+source("db/connection.R")
+source("db/db_read.R")
+source("db/db_write.R")
+
 user_name = NULL
 
 

@@ -5,6 +5,7 @@ import Customer from '../models/Customer';
 import Product from '../models/Product';
 import Transaction from '../models/Transaction';
 import TransactionService from '../services/TransactionService';
+import IObserver from '../utils/IObserver';
 
 interface ITransactionStore {
     serverFilteredTransactions?: Transaction[];
@@ -32,14 +33,18 @@ interface ITransactionStore {
     getServerFilteredData(): Promise<void>;
 }
 
-export class TransactionController implements ITransactionStore {
+export class TransactionController implements ITransactionStore, IObserver {
     constructor() {
-        if (TransactionService.serviceReady) {
-            this.setDefault();
-            this.getServerFilteredData();
-        }
-        makeAutoObservable(this);
+        TransactionService.addObserver(this);
+        this.setDefault();
     }
+
+    update = (): void => {
+        if (TransactionService.serviceReady) {
+            this.getServerFilteredData();
+            makeAutoObservable(this);
+        }
+    };
 
     async getServerFilteredData(): Promise<void> {
         this.isLoading = true;

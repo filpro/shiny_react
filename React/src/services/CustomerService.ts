@@ -1,6 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
 import qs from 'qs';
 import Customer from '../models/Customer';
+import Observable from '../utils/Observable';
 
 export interface CustomerApi {
     customerApiAddNew: string;
@@ -8,7 +9,7 @@ export interface CustomerApi {
     customerApiGetById: string;
 }
 
-class CustomerService {
+class CustomerService extends Observable {
     apiUrls?: CustomerApi;
 
     serviceReady = false;
@@ -17,6 +18,7 @@ class CustomerService {
     setApiUrl(urls: CustomerApi) {
         this.apiUrls = urls;
         this.serviceReady = true;
+        this.notifyObservers();
     }
 
     saveCustomer = async (customer: Customer): Promise<AxiosResponse<Customer>> => {

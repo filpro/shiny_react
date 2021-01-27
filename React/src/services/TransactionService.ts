@@ -2,6 +2,7 @@ import axios, { AxiosResponse } from 'axios';
 import Customer from '../models/Customer';
 import Transaction from '../models/Transaction';
 import Product from '../models/Product';
+import Observable from '../utils/Observable';
 
 export interface TransactionApi {
     transactionApiAddNew: string;
@@ -11,7 +12,7 @@ export interface TransactionApi {
     transactionApiDelete: string;
 }
 
-class TransactionService {
+class TransactionService extends Observable {
     apiUrls?: TransactionApi;
 
     serviceReady = false;
@@ -19,6 +20,7 @@ class TransactionService {
     setApiUrl(urls: TransactionApi) {
         this.apiUrls = urls;
         this.serviceReady = true;
+        this.notifyObservers();
     }
 
     async saveTransaction(transaction: Transaction): Promise<AxiosResponse<Transaction>> {

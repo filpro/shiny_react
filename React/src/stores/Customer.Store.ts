@@ -3,6 +3,7 @@ import { makeAutoObservable } from 'mobx';
 import { createContext } from 'react';
 import Customer from '../models/Customer';
 import CustomerService from '../services/CustomerService';
+import IObserver from '../utils/IObserver';
 
 interface ICustomerStore {
     getCustomerById(id: string): Promise<void>;
@@ -15,9 +16,18 @@ interface ICustomerStore {
     httpStatus?: number;
 }
 
-export class CustomerController implements ICustomerStore {
+export class CustomerController implements ICustomerStore, IObserver {
     constructor() {
-        if (CustomerService.serviceReady) this.loadAllCustomers();
+        CustomerService.addObserver(this);
+        if (CustomerService.serviceReady) this.setup();
+    }
+
+    update(): void {
+        if (CustomerService.serviceReady) this.setup();
+    }
+
+    private setup(): void {
+        this.loadAllCustomers();
         makeAutoObservable(this);
     }
 

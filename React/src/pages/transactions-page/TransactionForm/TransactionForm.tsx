@@ -66,6 +66,7 @@ const TransactionForm: React.FC = observer(
                 new Product(productName),
                 new Transaction(customerStore.selectedCustomer!.ID, transactionDate!, Number(productPrice))
             );
+            customerStore.loadAllCustomers();
             resetForm();
         };
 

@@ -6,11 +6,11 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import { Button, Divider } from '@material-ui/core';
 import ClientAdder from './ClientAdder/ClientAdder';
 import Customer from '../../../../models/Customer';
-import NewCustomerStore from '../../../../stores/Customer.Store';
+import CustomerStore from '../../../../stores/Customer.Store';
 
 const ClientSelect: React.FC = observer(
     (): JSX.Element => {
-        const newCustomerStore = useContext(NewCustomerStore);
+        const customerStore = useContext(CustomerStore);
 
         const [open, setOpen] = React.useState(false);
         const [inputValue, setInputValue] = React.useState('');
@@ -20,24 +20,38 @@ const ClientSelect: React.FC = observer(
         };
 
         const addNew = (customer: Customer): void => {
-            newCustomerStore.addCustomer(customer);
+            customerStore.addCustomer(customer);
         };
 
         const handleChangeSelected = (customer: Customer | null): void => {
             if (customer !== null) {
-                newCustomerStore.setSelected(customer);
+                customerStore.setSelected(customer);
                 setInputValue(`${customer.FIRST_NAME} ${customer.LAST_NAME}`);
             }
         };
+
+        const getSortedCustomers = (customers: Customer[] | undefined): Customer[] | undefined => {
+            if (customers) {
+                return customers
+                    ?.slice()
+                    .sort(
+                        (cust1, cust2) =>
+                            (cust2.LAST_TRANSACTION ? new Date(cust2.LAST_TRANSACTION).getTime() : 0) -
+                            (cust1.LAST_TRANSACTION ? new Date(cust1.LAST_TRANSACTION).getTime() : 0)
+                    );
+            }
+            return undefined;
+        };
+
         return (
             <>
                 <ClientAdder open={open} setOpen={setOpen} addNewCustomer={addNew} />
                 <Autocomplete
                     size="small"
                     id="combo-box-demo"
-                    options={newCustomerStore.allCustomers || []}
+                    options={getSortedCustomers(customerStore.allCustomers) || []}
                     getOptionLabel={(option) => (option === null ? '' : `${option.FIRST_NAME} ${option.LAST_NAME}`)}
-                    value={newCustomerStore.selectedCustomer || null}
+                    value={customerStore.selectedCustomer || null}
                     onChange={(_, newValue) => handleChangeSelected(newValue)}
                     inputValue={inputValue}
                     onInputChange={(_, newValue) => setInputValue(newValue)}
@@ -46,7 +60,7 @@ const ClientSelect: React.FC = observer(
                         return (
                             <>
                                 <div>
-                                    {`${option.FIRST_NAME} ${option.LAST_NAME}`}
+                                    {`${option.FIRST_NAME} ${option.LAST_NAME} (${option.LAST_TRANSACTION})`}
                                     <Divider />
                                 </div>
                             </>

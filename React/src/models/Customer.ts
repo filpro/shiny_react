@@ -13,6 +13,8 @@ export default class Customer {
 
     LAST_NAME: string;
 
+    LAST_TRANSACTION?: Date;
+
     constructor(id: string, firstName: string, lastName: string) {
         this.ID = id;
         this.FIRST_NAME = firstName;

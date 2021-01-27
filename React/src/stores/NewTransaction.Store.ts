@@ -5,10 +5,11 @@ import Product from '../models/Product';
 import Transaction from '../models/Transaction';
 import ProductService from '../services/ProductService';
 import TransactionService from '../services/TransactionService';
+import IObserver from '../utils/IObserver';
 
 interface ITransactionStore {
     loadAllTransactions(): Promise<void>;
-    addTransaction(product: Product, transaction: Transaction): Promise<void>;
+    addTransaction(product: Product, transaction: Transaction): Promise<Transaction>;
     allTransactions?: Transaction[];
     newTransacstion?: Transaction;
     checkingIfTransactionExistsForProductName?: boolean;
@@ -18,19 +19,29 @@ interface ITransactionStore {
     checkIfExistsTransaction(productName?: string, transactionDate?: Date | null): Promise<void>;
 }
 
-export class TransactionController implements ITransactionStore {
+export class TransactionController implements ITransactionStore, IObserver {
     constructor() {
-        if (TransactionService.serviceReady) this.loadAllTransactions();
+        TransactionService.addObserver(this);
+        if (TransactionService.serviceReady) this.setup();
+    }
+
+    update(): void {
+        if (TransactionService.serviceReady) this.setup();
+    }
+
+    private setup(): void {
+        this.loadAllTransactions();
         makeAutoObservable(this);
     }
 
-    async addTransaction(product: Product, transaction: Transaction): Promise<void> {
+    async addTransaction(product: Product, transaction: Transaction): Promise<Transaction> {
         const newProductResponse: AxiosResponse<Product> = await ProductService.saveProduct(product);
         const newProduct = newProductResponse.data;
         const tempTransaction = { ...transaction };
         tempTransaction.PRODUCT_ID = newProduct.ID;
         const newTransaction: AxiosResponse<Transaction> = await TransactionService.saveTransaction(tempTransaction);
         this.newTransaction = newTransaction.data;
+        return newTransaction.data;
     }
 
     async loadAllTransactions(): Promise<void> {

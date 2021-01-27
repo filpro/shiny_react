@@ -31,38 +31,43 @@ DataService$set("private","setId",function(vec = vector(), n, prefix, date_ref =
   return(result)
 })
 
-DataService$set("public","getTable",function(table_name, show_all = FALSE, show_content = TRUE){
+DataService$set("public","getTable",function(table_name, show_all = FALSE){
   result = openCloseConnection(function(con) {
-    dbReadTable(con,table_name) %>% as.data.table()
+    queriedTable = tbl(con, table_name)
+    if (!show_all) {
+      latest = queriedTable %>% group_by(ID) %>% summarize(latestMod=max(DATE_MODIFIED))
+      queriedTable = queriedTable %>% 
+        left_join(latest, by=c("ID" = "ID")) %>% 
+        filter(DATE_MODIFIED == latestMod) %>% 
+        select(-c(latestMod)) %>%
+        filter(IS_DELETED == 0)
+    }
+    return(queriedTable)
   })
-  if(!show_all){
-    result = result[order(DATE_MODIFIED)] %>% unique(by="ID", fromLast=TRUE)
-    result = result[IS_DELETED == 0]
-  }
-  
-  if(!show_content){
-    result = result[numeric(0)]
-  }
   return(result)
 })
 
-DataService$set("public","getAllCustomers",function(show_all = FALSE, show_content = TRUE){
-  result = self$getTable("customers", show_all = show_all, show_content = show_content)
+DataService$set("public","getAllCustomers",function(show_all = FALSE, return_query = FALSE){
+  result = self$getTable("customers", show_all = show_all) %>% as.data.table()
+  if(!return_query) result = result %>% as.data.table()
   return(result)
 })
 
-DataService$set("public","getAllProducts",function(show_all = FALSE, show_content = TRUE){
-  result = self$getTable("products", show_all = show_all, show_content = show_content)
+DataService$set("public","getAllProducts",function(show_all = FALSE, return_query = FALSE){
+  result = self$getTable("products", show_all = show_all) %>% as.data.table()
+  if(!return_query) result = result %>% as.data.table()
   return(result)
 })
 
-DataService$set("public","getAllTransmissions",function(show_all = FALSE, show_content = TRUE){
-  result = self$getTable("transmissions", show_all = show_all, show_content = show_content)
+DataService$set("public","getAllTransmissions",function(show_all = FALSE, return_query = FALSE){
+  result = self$getTable("transmissions", show_all = show_all) %>% as.data.table()
+  if(!return_query) result = result %>% as.data.table()
   return(result)
 })
 
-DataService$set("public","getAllTransactions",function(show_all = FALSE, show_content = TRUE){
-  result = self$getTable("transactions", show_all = show_all, show_content = show_content)
+DataService$set("public","getAllTransactions",function(show_all = FALSE, return_query = FALSE){
+  result = self$getTable("transactions", show_all = show_all) %>% as.data.table()
+  if(!return_query) result = result %>% as.data.table()
   return(result)
 })
 
@@ -97,7 +102,7 @@ DataService$set("public","addRow", function(table_name, object, prefix = "", upd
 
 
   
-  table_ref = self$getTable(table_name)[,-c("INT_ID")]
+  table_ref = (self$getTable(table_name) %>% as.data.table())[,-c("INT_ID")]
   ids = table_ref$ID
 
   object$DATE_MODIFIED = Sys.time() %>% as.character()
@@ -141,7 +146,7 @@ DataService$set("public","addRow", function(table_name, object, prefix = "", upd
   #   "INSERT INTO ",table_name, " ('",paste0(c("ID",object %>% colnames(),"DATE_CREATED","IS_DELETED","DATE_MODIFIED"), collapse = "','"),
   #   "') VALUES ('", c(id,object %>% as.matrix(),creation_date ,is_deleted,modification_date) %>% paste0(collapse = "','"),"')")
   
-  if(self$getTable(table_name)[ID %in% id] %>% nrow() == 0 | !is.na(update_id)){
+  if((self$getTable(table_name) %>% as.data.table())[ID %in% id] %>% nrow() == 0 | !is.na(update_id)){
     dbExecute(conn, query)
     #dbCommit(conn)   # or dbRollback(conn) if something went wrong
     #poolReturn(conn)
