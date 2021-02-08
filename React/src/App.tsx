@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
 import { hot } from 'react-hot-loader';
-import { createStyles, makeStyles, Theme, Container } from '@material-ui/core';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { observer } from 'mobx-react';
 import AppRouter from './components/Router/AppRouter';
@@ -11,18 +10,9 @@ import TransactionService, { TransactionApi } from './services/TransactionServic
 import IWindow from './utils/IWindow';
 import ProductService, { ProductApi } from './services/ProductService';
 import UpdateTrigger from './components/UpdateTrigger/UpdateTrigger';
+import withTranslate from './infrastructure/internationalization/hoc/WithTranslate';
 
 declare let window: IWindow;
-
-const useStyles = makeStyles((theme: Theme) =>
-    createStyles({
-        gridcontainer: {
-            maxWidth: window.innerWidth * 0.93,
-            wordWrap: 'break-word',
-            gridGap: theme.spacing(3),
-        },
-    })
-);
 
 const App: React.FC = observer(
     (): JSX.Element => {
@@ -32,7 +22,6 @@ const App: React.FC = observer(
         const [isProductApiLoaded, setIsProductApiLoaded] = useState(false);
         const [isShinyConnected, setIsShinyConnected] = useState(false);
         const [progress, setProgress] = useState(0);
-        const classes = useStyles();
 
         useEffect(() => {
             window.Shiny.addCustomMessageHandler<CustomerApi>('customerApi', (urls: CustomerApi) => {
@@ -65,14 +54,8 @@ const App: React.FC = observer(
 
         const appContent: JSX.Element = (
             <header className="App-header">
-                {/* <TransactionInspect.Provider value={new TransactionController()}> */}
                 <UpdateTrigger />
-                <Sidebar>
-                    <Container className={classes.gridcontainer}>
-                        {isInitialized ? <AppRouter /> : <LinearProgress variant="determinate" value={progress} />}
-                    </Container>
-                </Sidebar>
-                {/* </TransactionInspect.Provider> */}
+                <Sidebar>{isInitialized ? <AppRouter /> : <LinearProgress variant="determinate" value={progress} />}</Sidebar>
             </header>
         );
 
@@ -80,4 +63,4 @@ const App: React.FC = observer(
     }
 );
 
-export default hot(module)(App);
+export default hot(module)(withTranslate(App));

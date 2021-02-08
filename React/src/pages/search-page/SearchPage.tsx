@@ -5,7 +5,7 @@ import SearchPanel from './SearchPanel/SearchPanel';
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
-            margin: `${theme.spacing(2)}px auto`,
+            // margin: `${theme.spacing(2)}px auto`,
             width: '100%',
         },
         heading: {

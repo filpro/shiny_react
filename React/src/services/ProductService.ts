@@ -10,12 +10,15 @@ export interface ProductApi {
 class ProductService extends Observable {
     apiUrls?: ProductApi;
 
+    serviceReady = false;
+
     cancelToken?: CancelTokenStatic;
 
     source?: CancelTokenSource;
 
     setApiUrl(urls: ProductApi) {
         this.apiUrls = urls;
+        this.serviceReady = true;
         this.notifyObservers();
     }
 

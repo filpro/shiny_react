@@ -6,6 +6,8 @@ import AccordionSummary from '@material-ui/core/AccordionSummary';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ItemList from './ItemList/ItemList';
+import withTranslate, { WithTranslateProps } from '../../../infrastructure/internationalization/hoc/WithTranslate';
+import Translations from '../../../infrastructure/internationalization/Translations';
 
 import InspectTransactionStore from '../../../stores/TransactionInspect.Store';
 
@@ -16,7 +18,8 @@ const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
             '& .MuiTextField-root': {
-                margin: theme.spacing(1),
+                marginTop: theme.spacing(1),
+                marginBottom: theme.spacing(1),
                 width: '100%',
             },
         },
@@ -40,8 +43,8 @@ const useStyles = makeStyles((theme: Theme) =>
     })
 );
 
-const SearchPanel: React.FC = observer(
-    (): JSX.Element => {
+const SearchPanel: React.FC<WithTranslateProps> = observer(
+    (props: WithTranslateProps): JSX.Element => {
         const inspectTransactionsStore = useContext(InspectTransactionStore);
         const classes = useStyles();
         const noOfFiltersApplied = [
@@ -58,7 +61,9 @@ const SearchPanel: React.FC = observer(
                             container
                         >
                             <Grid item>
-                                <Typography className={classes.heading}>{`FILTRY ${noOfFiltersApplied > 0 ? ` (${noOfFiltersApplied})` : ''}`}</Typography>
+                                <Typography className={classes.heading}>{`${props.translate(Translations.SearchTransaction.Filters.Filters)} ${
+                                    noOfFiltersApplied > 0 ? ` (${noOfFiltersApplied})` : ''
+                                }`}</Typography>
                             </Grid>
                             <Grid item>
                                 {inspectTransactionsStore.isLoading ? (
@@ -79,7 +84,7 @@ const SearchPanel: React.FC = observer(
                 </Accordion>
                 <Accordion elevation={4} className={`${classes.root}`}>
                     <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Typography className={classes.heading}>PODSUMOWANIE</Typography>
+                        <Typography className={classes.heading}>{props.translate(Translations.SearchTransaction.Summary.Summary)}</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
                         <Statistics isLoading={inspectTransactionsStore.isLoading} transactions={inspectTransactionsStore.localFilteredTransactions} />
@@ -92,7 +97,9 @@ const SearchPanel: React.FC = observer(
                             container
                         >
                             <Grid item>
-                                <Typography className={classes.heading}>LISTA TRANSAKCJI</Typography>
+                                <Typography className={classes.heading}>
+                                    {props.translate(Translations.SearchTransaction.TransactionsList.TransactionsList)}
+                                </Typography>
                             </Grid>
                             <Grid item>
                                 {inspectTransactionsStore.isLoading ? (
@@ -112,4 +119,4 @@ const SearchPanel: React.FC = observer(
     }
 );
 
-export default SearchPanel;
+export default withTranslate(SearchPanel);

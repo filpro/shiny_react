@@ -33,6 +33,10 @@ interface ITransactionStore {
     getServerFilteredData(): Promise<void>;
 }
 
+/** This is a store dedicated for inspecting Transactions.
+ * Its responsible i.a. for communication with database (throught service),
+ * rendering dropdown lists, transactions lists.
+ */
 export class TransactionController implements ITransactionStore, IObserver {
     constructor() {
         TransactionService.addObserver(this);

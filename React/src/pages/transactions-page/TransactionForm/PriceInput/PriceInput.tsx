@@ -2,6 +2,8 @@ import React from 'react';
 import NumberFormat from 'react-number-format';
 import TextField from '@material-ui/core/TextField';
 import { InputAdornment } from '@material-ui/core';
+import withTranslate, { WithTranslateProps } from '../../../../infrastructure/internationalization/hoc/WithTranslate';
+import Translations from '../../../../infrastructure/internationalization/Translations';
 
 interface NumberFormatCustomProps {
     inputRef: (instance: NumberFormat | null) => void;
@@ -9,7 +11,7 @@ interface NumberFormatCustomProps {
     name: string;
 }
 
-function NumberFormatCustom(props: NumberFormatCustomProps) {
+const NumberFormatCustom = (props: NumberFormatCustomProps) => {
     const { inputRef, onChange, ...other } = props;
 
     return (
@@ -31,7 +33,7 @@ function NumberFormatCustom(props: NumberFormatCustomProps) {
             allowedDecimalSeparators={['.', ',']}
         />
     );
-}
+};
 
 interface State {
     numberformat: string;
@@ -42,11 +44,10 @@ interface IProps {
     handleProductPriceChange(price: string): void;
 }
 
-const PriceInput: React.FC<IProps> = (props: IProps): JSX.Element => {
+const PriceInput: React.FC<IProps & WithTranslateProps> = (props: IProps & WithTranslateProps): JSX.Element => {
     const [values, setValues] = React.useState<State>({
         numberformat: props.productPrice,
     });
-
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         props.handleProductPriceChange(event.target.value);
         setValues({
@@ -54,12 +55,11 @@ const PriceInput: React.FC<IProps> = (props: IProps): JSX.Element => {
             [event.target.name]: event.target.value,
         });
     };
-
     return (
         <TextField
             autoComplete="off"
-            label="Cena produktu"
-            value={values.numberformat}
+            label={props.translate(Translations.NewTransaction.ProductPrice)}
+            value={props.productPrice}
             onChange={handleChange}
             name="numberformat"
             id="formatted-numberformat-input"
@@ -67,8 +67,10 @@ const PriceInput: React.FC<IProps> = (props: IProps): JSX.Element => {
                 inputComponent: NumberFormatCustom as any,
                 endAdornment: <InputAdornment position="end">PLN</InputAdornment>,
             }}
+            variant="outlined"
+            required
         />
     );
 };
 
-export default PriceInput;
+export default withTranslate(PriceInput);

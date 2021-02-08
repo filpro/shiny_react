@@ -5,6 +5,8 @@ import { observer } from 'mobx-react';
 import { createStyles, Grid, makeStyles, Theme } from '@material-ui/core';
 import plLocale from 'date-fns/locale/pl';
 import InspectTransactionStore from '../../../../stores/TransactionInspect.Store';
+import withTranslate, { WithTranslateProps } from '../../../../infrastructure/internationalization/hoc/WithTranslate';
+import Translations from '../../../../infrastructure/internationalization/Translations';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -19,8 +21,8 @@ const useStyles = makeStyles((theme: Theme) =>
     })
 );
 
-const DateRange: React.FC = observer(
-    (): JSX.Element => {
+const DateRange: React.FC<WithTranslateProps> = observer(
+    (props: WithTranslateProps): JSX.Element => {
         const inspectTransactionsStore = useContext(InspectTransactionStore);
         const classes = useStyles();
         return (
@@ -33,7 +35,7 @@ const DateRange: React.FC = observer(
                             format="dd-MM-yyyy"
                             margin="normal"
                             id="date-picker-inline"
-                            label="Od"
+                            label={props.translate(Translations.SearchTransaction.Filters.DateFrom)}
                             value={inspectTransactionsStore.dateFrom}
                             onChange={(e) => inspectTransactionsStore.setDateFrom(e)}
                             autoOk
@@ -41,6 +43,7 @@ const DateRange: React.FC = observer(
                                 'aria-label': 'change date',
                             }}
                             fullWidth
+                            inputVariant="outlined"
                         />
                     </MuiPickersUtilsProvider>
                 </Grid>
@@ -52,7 +55,7 @@ const DateRange: React.FC = observer(
                             format="dd-MM-yyyy"
                             margin="normal"
                             id="date-picker-inline"
-                            label="Do"
+                            label={props.translate(Translations.SearchTransaction.Filters.DateTo)}
                             value={inspectTransactionsStore.dateTo}
                             onChange={(e) => inspectTransactionsStore.setDateTo(e)}
                             autoOk
@@ -60,6 +63,7 @@ const DateRange: React.FC = observer(
                                 'aria-label': 'change date',
                             }}
                             fullWidth
+                            inputVariant="outlined"
                         />
                     </MuiPickersUtilsProvider>
                 </Grid>
@@ -68,4 +72,4 @@ const DateRange: React.FC = observer(
     }
 );
 
-export default DateRange;
+export default withTranslate(DateRange);

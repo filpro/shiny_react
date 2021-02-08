@@ -17,7 +17,7 @@ transactionApiModule = function(input, output, session) {
                 )
 
                 response = getters_list$getTransactionsById(result) %>% as.list() %>% toJSON(auto_unbox = TRUE)
-                refreshDataTrigger(result)
+                dataUpdateTrigger(result)
 
                 shiny:::httpResponse(200, 'application/json', response)
             }
@@ -121,9 +121,9 @@ transactionApiModule = function(input, output, session) {
         }
     )
 
-    refreshDataTrigger = function(message) {
-        session$sendCustomMessage('refreshDataTrigger',message)
-    }
+    observeEvent(dataUpdateTrigger(), {
+        session$sendCustomMessage('refreshDataTrigger',dataUpdateTrigger())
+    }, ignoreInit=TRUE)
 
     session$sendCustomMessage('transactionApi', list(
         transactionApiAddNew = transactionApiAddNew,

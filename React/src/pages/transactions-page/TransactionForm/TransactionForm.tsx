@@ -1,58 +1,59 @@
-import { makeStyles, Theme, createStyles, Grid, Container, CircularProgress } from '@material-ui/core';
-import React, { useState, useContext, useEffect } from 'react';
+import { makeStyles, Theme, createStyles, Grid } from '@material-ui/core';
+import React, { useContext } from 'react';
 import Button from '@material-ui/core/Button';
 import { observer } from 'mobx-react';
+import Backdrop from '@material-ui/core/Backdrop';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import ClientSelect from './ClientSelect/ClientSelect';
 import DatePicker from './DatePicker/DatePicker';
 import PriceInput from './PriceInput/PriceInput';
-import ProductName from './ProductId/ProductId';
+import ProductName from './ProductName/ProductName';
 import TransactionConfirmation from './TransactionConfirmation/TransactionConfirmation';
 import CustomerStore from '../../../stores/Customer.Store';
 import NewTransactionStore from '../../../stores/NewTransaction.Store';
 
 import Transaction from '../../../models/Transaction';
 import Product from '../../../models/Product';
-import Customer from '../../../models/Customer';
+import withTranslate, { WithTranslateProps } from '../../../infrastructure/internationalization/hoc/WithTranslate';
+import Translations from '../../../infrastructure/internationalization/Translations';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
             '& .MuiTextField-root': {
-                margin: theme.spacing(1),
+                marginTop: theme.spacing(1),
+                marginBottom: theme.spacing(1),
                 width: '100%',
             },
         },
         submitButton: {
-            margin: theme.spacing(1),
+            marginTop: theme.spacing(3),
+            marginBottom: theme.spacing(3),
             width: '100%',
             backgroundColor: 'rgba(221,221,221,1)',
+        },
+        backdrop: {
+            zIndex: theme.zIndex.drawer + 1,
+            color: '#fff',
         },
     })
 );
 
-const TransactionForm: React.FC = observer(
-    (): JSX.Element => {
+const TransactionForm: React.FC<WithTranslateProps> = observer(
+    (props: WithTranslateProps): JSX.Element => {
         const classes = useStyles();
         const customerStore = useContext(CustomerStore);
         const newTransactionStore = useContext(NewTransactionStore);
-        const [transactionDate, setTransactionDate] = useState<Date | null>(new Date());
-        const [productName, setProductId] = useState('');
-        const [productPrice, setProductPrice] = useState<string>('');
         const [openConfirmationDialog, setOpenConfirmationDialog] = React.useState(false);
 
-        useEffect(() => {
-            const timeOutId = setTimeout(() => newTransactionStore.checkIfExistsTransaction(productName, transactionDate), 500);
-            return () => clearTimeout(timeOutId);
-        }, [newTransactionStore, productName, transactionDate]);
-
         const resetForm = () => {
-            setProductPrice('');
-            setProductId('');
-            customerStore.setSelected(new Customer('-1', '', ''));
+            newTransactionStore.setNewProductPrice('');
+            newTransactionStore.setNewProductName('');
+            customerStore.setSelected(null);
         };
 
-        const handleproductIdChange = (id: string): void => {
-            setProductId(id.toUpperCase());
+        const handleProductNameChange = (id: string): void => {
+            newTransactionStore.setNewProductName(id.toUpperCase());
         };
 
         const handleConfirmation = () => {
@@ -63,62 +64,58 @@ const TransactionForm: React.FC = observer(
 
         const handleHasConfirmed = () => {
             newTransactionStore.addTransaction(
-                new Product(productName),
-                new Transaction(customerStore.selectedCustomer!.ID, transactionDate!, Number(productPrice))
+                new Product(newTransactionStore.newProductName),
+                new Transaction(customerStore.selectedCustomer!.ID, newTransactionStore.newTransactionDate!, Number(newTransactionStore.newProductPrice))
             );
             customerStore.loadAllCustomers();
             resetForm();
         };
-
         const handleTransactionDateChange = (date: Date) => {
-            setTransactionDate(date);
-            newTransactionStore.checkIfExistsTransaction(productName, transactionDate);
+            newTransactionStore.setNewTransactionDate(date);
         };
 
         const productIdValidationMessage: JSX.Element = newTransactionStore.doesTransactionExistForProductName ? (
-            <span style={{ color: 'red' }}>Podany numer produktu już istnieje dla tej daty</span>
+            <span style={{ color: 'red' }}>{props.translate(Translations.NewTransaction.ProductExistsWarning)}</span>
         ) : (
             <></>
         );
 
         return (
-            <Container>
+            <>
                 {customerStore.selectedCustomer ? (
                     <TransactionConfirmation
                         open={openConfirmationDialog}
                         setOpen={setOpenConfirmationDialog}
-                        transactionDate={transactionDate}
-                        productId={productName}
+                        transactionDate={newTransactionStore.newTransactionDate}
+                        productId={newTransactionStore.newProductName}
                         clientSelected={customerStore.selectedCustomer}
-                        productPrice={productPrice}
+                        productPrice={newTransactionStore.newProductPrice}
                         handleHasConfirmed={handleHasConfirmed}
                     />
                 ) : null}
-                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                    <form className={classes.root} noValidate>
-                        <div>
-                            <DatePicker date={transactionDate} handleDateChange={handleTransactionDateChange} />
-                        </div>
-                        <div>
-                            <ProductName productName={productName} handleProductNameChange={handleproductIdChange} />
-                            {newTransactionStore.checkingIfTransactionExistsForProductName ? <CircularProgress size={19} /> : productIdValidationMessage}
-                        </div>
-                        <div>
-                            <ClientSelect />
-                        </div>
-                        <div>
-                            <PriceInput productPrice={productPrice} handleProductPriceChange={setProductPrice} />
-                        </div>
-                        <div>
-                            <Button variant="contained" size="large" className={classes.submitButton} onClick={handleConfirmation}>
-                                SPRZEDANO
-                            </Button>
-                        </div>
+                <Backdrop className={classes.backdrop} open={newTransactionStore.isAdding}>
+                    <CircularProgress color="inherit" />
+                </Backdrop>
+                <Grid item xs={12} sm={12} md={12} lg={6} xl={6}>
+                    <form className={classes.root} onSubmit={handleConfirmation}>
+                        <DatePicker date={newTransactionStore.newTransactionDate} handleDateChange={handleTransactionDateChange} />
+                        <ProductName
+                            productName={newTransactionStore.newProductName}
+                            handleProductNameChange={handleProductNameChange}
+                            isInvalid={newTransactionStore.doesTransactionExistForProductName}
+                            isChecking={newTransactionStore.checkingIfTransactionExistsForProductName}
+                        />
+                        {newTransactionStore.checkingIfTransactionExistsForProductName ? '' : productIdValidationMessage}
+                        <ClientSelect wait={newTransactionStore.isLoading} />
+                        <PriceInput productPrice={newTransactionStore.newProductPrice} handleProductPriceChange={newTransactionStore.setNewProductPrice} />
+                        <Button variant="contained" type="submit" size="large" className={classes.submitButton}>
+                            {props.translate(Translations.NewTransaction.Sold)}
+                        </Button>
                     </form>
                 </Grid>
-            </Container>
+            </>
         );
     }
 );
 
-export default React.memo(TransactionForm);
+export default React.memo(withTranslate(TransactionForm));

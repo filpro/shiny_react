@@ -9,11 +9,12 @@ interface ICustomerStore {
     getCustomerById(id: string): Promise<void>;
     loadAllCustomers(): Promise<void>;
     addCustomer(customer: Customer): Promise<void>;
-    setSelected(customer: Customer): void;
+    setSelected(customer: Customer | null): void;
     allCustomers?: Customer[];
-    selectedCustomer?: Customer;
+    selectedCustomer?: Customer | null;
     isFetchSucceed?: boolean;
     httpStatus?: number;
+    isLoading: boolean;
 }
 
 export class CustomerController implements ICustomerStore, IObserver {
@@ -38,9 +39,11 @@ export class CustomerController implements ICustomerStore, IObserver {
     }
 
     async loadAllCustomers(): Promise<void> {
+        this.isLoading = true;
         const serverResponse: AxiosResponse<Customer[]> = await CustomerService.getAllCustomers();
         const response = serverResponse;
         this.allCustomers = response.data;
+        this.isLoading = false;
     }
 
     async getCustomerById(id: string): Promise<void> {
@@ -48,11 +51,13 @@ export class CustomerController implements ICustomerStore, IObserver {
         this.selectedCustomer = serverResponse.data;
     }
 
-    setSelected(customer: Customer): void {
+    setSelected(customer: Customer | null): void {
         this.selectedCustomer = customer;
     }
 
-    selectedCustomer?: Customer;
+    isLoading = false;
+
+    selectedCustomer?: Customer | null;
 
     allCustomers?: Customer[];
 

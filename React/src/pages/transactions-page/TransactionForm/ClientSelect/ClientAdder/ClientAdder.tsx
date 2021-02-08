@@ -9,6 +9,8 @@ import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { createStyles, makeStyles, Theme, useTheme } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Customer from '../../../../../models/Customer';
+import withTranslate, { WithTranslateProps } from '../../../../../infrastructure/internationalization/hoc/WithTranslate';
+import Translations from '../../../../../infrastructure/internationalization/Translations';
 
 interface IProps {
     open: boolean;
@@ -28,7 +30,7 @@ const useStyles = makeStyles((theme: Theme) =>
     })
 );
 
-const ClientAdder: React.FC<IProps> = (props: IProps): JSX.Element => {
+const ClientAdder: React.FC<IProps & WithTranslateProps> = (props: IProps & WithTranslateProps): JSX.Element => {
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
     const classes = useStyles();
@@ -54,26 +56,42 @@ const ClientAdder: React.FC<IProps> = (props: IProps): JSX.Element => {
 
     return (
         <Dialog fullScreen={fullScreen} open={props.open} onClose={handleClose} aria-labelledby="responsive-dialog-title" maxWidth="sm" fullWidth>
-            <DialogTitle id="responsive-dialog-title">Dodaj nowego klienta</DialogTitle>
+            <DialogTitle id="responsive-dialog-title">{props.translate(Translations.NewTransaction.NewClient.AddNewClient)}</DialogTitle>
             <DialogContent>
                 <FormGroup className={classes.root}>
                     <Grid container style={{ gridGap: theme.spacing(3) }}>
                         <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                            <TextField required id="firstName" label="Imię" defaultValue="" fullWidth onChange={handleChange} autoComplete="off" />
+                            <TextField
+                                required
+                                id="firstName"
+                                label={props.translate(Translations.NewTransaction.NewClient.FirstName)}
+                                defaultValue=""
+                                fullWidth
+                                onChange={handleChange}
+                                autoComplete="off"
+                            />
                         </Grid>
                         <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                            <TextField required id="lastName" label="Nazwisko" defaultValue="" fullWidth onChange={handleChange} autoComplete="off" />
+                            <TextField
+                                required
+                                id="lastName"
+                                label={props.translate(Translations.NewTransaction.NewClient.LastName)}
+                                defaultValue=""
+                                fullWidth
+                                onChange={handleChange}
+                                autoComplete="off"
+                            />
                         </Grid>
                     </Grid>
                     <Grid justify="space-between" container style={{ paddingTop: '20px' }}>
                         <Grid item xs={6} sm={6} md={6} lg={6} xl={6}>
                             <Button autoFocus onClick={handleClose} variant="outlined" color="secondary" size="large">
-                                Anuluj
+                                {props.translate(Translations.NewTransaction.NewClient.Cancel)}
                             </Button>
                         </Grid>
                         <Grid item xs={6} sm={6} md={6} lg={6} xl={6} className={classes.rightButton}>
                             <Button variant="outlined" color="primary" onClick={handleConfirmation} autoFocus type="submit" size="large">
-                                Dodaj
+                                {props.translate(Translations.NewTransaction.NewClient.Add)}
                             </Button>
                         </Grid>
                     </Grid>
@@ -83,4 +101,4 @@ const ClientAdder: React.FC<IProps> = (props: IProps): JSX.Element => {
     );
 };
 
-export default ClientAdder;
+export default withTranslate(ClientAdder);

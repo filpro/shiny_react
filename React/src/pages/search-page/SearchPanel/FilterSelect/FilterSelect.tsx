@@ -6,6 +6,8 @@ import { VariableSizeList as List, ListChildComponentProps } from 'react-window'
 import ListSubheader from '@material-ui/core/ListSubheader';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import InspectTransactionStore from '../../../../stores/TransactionInspect.Store';
+import withTranslate, { WithTranslateProps } from '../../../../infrastructure/internationalization/hoc/WithTranslate';
+import Translations from '../../../../infrastructure/internationalization/Translations';
 
 interface IProps<T> {
     label: string;
@@ -81,7 +83,7 @@ const ListboxComponent = React.forwardRef<HTMLDivElement>(
 );
 
 const FilterSelect = observer(
-    <T,>(props: IProps<T>): JSX.Element => {
+    <T,>(props: IProps<T> & WithTranslateProps): JSX.Element => {
         const inspectTransactionsStore = useContext(InspectTransactionStore);
 
         const changeHandler = (value: T[] | [], reason: string) => {
@@ -93,7 +95,6 @@ const FilterSelect = observer(
         ) : (
             <>
                 <Autocomplete
-                    size="small"
                     id="combo-box-demo"
                     multiple
                     filterSelectedOptions
@@ -101,9 +102,9 @@ const FilterSelect = observer(
                     getOptionLabel={props.optionLabel}
                     value={props.filter || []}
                     onChange={(_, newValue, reason) => changeHandler(newValue, reason)}
-                    renderInput={(params) => <TextField {...params} label={props.label} fullWidth />}
+                    renderInput={(params) => <TextField {...params} label={props.label} fullWidth variant="outlined" />}
                     renderOption={props.renderOption}
-                    noOptionsText="Brak możliwych opcji"
+                    noOptionsText={props.translate(Translations.SearchTransaction.Filters.NoMoreOptions)}
                     disableListWrap
                     ListboxComponent={ListboxComponent as React.ComponentType<React.HTMLAttributes<HTMLElement>>}
                 />
@@ -112,4 +113,4 @@ const FilterSelect = observer(
     }
 );
 
-export default FilterSelect;
+export default withTranslate(FilterSelect);

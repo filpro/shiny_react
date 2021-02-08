@@ -5,7 +5,6 @@ getters_list = list()
 getters_list$getTable = function(tablename, FUN = collect, show_all = FALSE, conInput = NA){
   action = function(con) {
       log_info("getTable - DECLARING TABLE:")
-      if(!is.na(conInput)) con = conInput
       table = tbl(con, tablename)
       if (!show_all) {
         log_info("FILTERING")
@@ -18,7 +17,7 @@ getters_list$getTable = function(tablename, FUN = collect, show_all = FALSE, con
       log_info("getTable - STARTING SUBFUNCTION:")
       FUN(table, con)
   }
-  
+
   if(!is.na(conInput)) {
     action(conInput)
   } else {

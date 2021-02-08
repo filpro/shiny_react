@@ -3,14 +3,31 @@ import React, { useContext } from 'react';
 import { observer } from 'mobx-react';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import { Button, Divider } from '@material-ui/core';
+import { Button, CircularProgress, Typography, createStyles, makeStyles } from '@material-ui/core';
 import ClientAdder from './ClientAdder/ClientAdder';
 import Customer from '../../../../models/Customer';
 import CustomerStore from '../../../../stores/Customer.Store';
+import withTranslate, { WithTranslateProps } from '../../../../infrastructure/internationalization/hoc/WithTranslate';
+import Translations from '../../../../infrastructure/internationalization/Translations';
 
-const ClientSelect: React.FC = observer(
-    (): JSX.Element => {
+const useStyles = makeStyles(() =>
+    createStyles({
+        mainItemPart: {
+            fontWeight: 300,
+            fontSize: '0.9rem',
+            lineHeight: 1,
+        },
+    })
+);
+
+interface IProps {
+    wait: boolean;
+}
+
+const ClientSelect: React.FC<IProps & WithTranslateProps> = observer(
+    (props: IProps & WithTranslateProps): JSX.Element => {
         const customerStore = useContext(CustomerStore);
+        const classes = useStyles();
 
         const [open, setOpen] = React.useState(false);
         const [inputValue, setInputValue] = React.useState('');
@@ -47,7 +64,6 @@ const ClientSelect: React.FC = observer(
             <>
                 <ClientAdder open={open} setOpen={setOpen} addNewCustomer={addNew} />
                 <Autocomplete
-                    size="small"
                     id="combo-box-demo"
                     options={getSortedCustomers(customerStore.allCustomers) || []}
                     getOptionLabel={(option) => (option === null ? '' : `${option.FIRST_NAME} ${option.LAST_NAME}`)}
@@ -55,22 +71,27 @@ const ClientSelect: React.FC = observer(
                     onChange={(_, newValue) => handleChangeSelected(newValue)}
                     inputValue={inputValue}
                     onInputChange={(_, newValue) => setInputValue(newValue)}
-                    renderInput={(params) => <TextField {...params} label="Nazwa klienta" fullWidth />}
+                    renderInput={(params) => (
+                        <TextField {...params} label={props.translate(Translations.NewTransaction.ClientName)} fullWidth variant="outlined" required />
+                    )}
                     renderOption={(option) => {
                         return (
                             <>
-                                <div>
-                                    {`${option.FIRST_NAME} ${option.LAST_NAME} (${option.LAST_TRANSACTION})`}
-                                    <Divider />
-                                </div>
+                                <Typography className={classes.mainItemPart}>{`${option.FIRST_NAME} ${option.LAST_NAME}`}</Typography>
                             </>
                         );
                     }}
-                    noOptionsText={<Button onMouseDown={() => newClientHandler()}>Dodaj nowego klienta</Button>}
+                    noOptionsText={
+                        props.wait ? (
+                            <CircularProgress size={19} />
+                        ) : (
+                            <Button onMouseDown={() => newClientHandler()}>{props.translate(Translations.NewTransaction.AddNewCustomer)}</Button>
+                        )
+                    }
                     ListboxProps={{
                         style: {
                             maxHeight: '150px',
-                            border: '1px solid black',
+                            border: '0.5px solid black',
                             fontSize: 'small',
                         },
                     }}
@@ -80,4 +101,4 @@ const ClientSelect: React.FC = observer(
     }
 );
 
-export default ClientSelect;
+export default withTranslate(ClientSelect);

@@ -2,6 +2,8 @@ import { Card, CardContent, createStyles, makeStyles, Grid, Typography, Theme } 
 import React from 'react';
 import Skeleton from '@material-ui/lab/Skeleton';
 import Transaction from '../../../../models/Transaction';
+import withTranslate, { WithTranslateProps } from '../../../../infrastructure/internationalization/hoc/WithTranslate';
+import Translations from '../../../../infrastructure/internationalization/Translations';
 
 interface IProps {
     transactions: Transaction[] | undefined;
@@ -23,15 +25,31 @@ const useStyles = makeStyles((theme: Theme) =>
     })
 );
 
-const Statistics = (props: IProps): JSX.Element => {
+const Statistics = (props: IProps & WithTranslateProps): JSX.Element => {
     const classes = useStyles();
     return props.transactions ? (
         <Grid container>
-            <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+            <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
                 <Card className={classes.card}>
                     <CardContent>
                         <Typography className={classes.title} color="textSecondary" gutterBottom>
-                            Ilość transakcji
+                            {props.translate(Translations.SearchTransaction.Summary.TransmissionsCount)}
+                        </Typography>
+                        {props.isLoading ? (
+                            <Skeleton variant="rect" height={24} />
+                        ) : (
+                            <Typography variant="h5" component="h2">
+                                {props.transactions.map((x) => x.TRANSMISSION_ID).filter((x, i, a) => a.indexOf(x) === i).length}
+                            </Typography>
+                        )}
+                    </CardContent>
+                </Card>
+            </Grid>
+            <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
+                <Card className={classes.card}>
+                    <CardContent>
+                        <Typography className={classes.title} color="textSecondary" gutterBottom>
+                            {props.translate(Translations.SearchTransaction.Summary.TransactionsCount)}
                         </Typography>
                         {props.isLoading ? (
                             <Skeleton variant="rect" height={24} />
@@ -43,11 +61,11 @@ const Statistics = (props: IProps): JSX.Element => {
                     </CardContent>
                 </Card>
             </Grid>
-            <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+            <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
                 <Card className={classes.card}>
                     <CardContent>
                         <Typography className={classes.title} color="textSecondary" gutterBottom>
-                            Liczba klientów
+                            {props.translate(Translations.SearchTransaction.Summary.CustomersCount)}
                         </Typography>
                         {props.isLoading ? (
                             <Skeleton variant="rect" height={24} />
@@ -59,11 +77,11 @@ const Statistics = (props: IProps): JSX.Element => {
                     </CardContent>
                 </Card>
             </Grid>
-            <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+            <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
                 <Card className={classes.card}>
                     <CardContent>
                         <Typography className={classes.title} color="textSecondary" gutterBottom>
-                            Obrót
+                            {props.translate(Translations.SearchTransaction.Summary.TurnoverSum)}
                         </Typography>
                         {props.isLoading ? (
                             <Skeleton variant="rect" height={24} />
@@ -83,4 +101,4 @@ const Statistics = (props: IProps): JSX.Element => {
     );
 };
 
-export default Statistics;
+export default withTranslate(Statistics);

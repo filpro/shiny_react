@@ -4,6 +4,7 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
 import Hidden from '@material-ui/core/Hidden';
+import Grid from '@material-ui/core/Grid';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -16,7 +17,9 @@ import { Link } from 'react-router-dom';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import MenuIcon from '@material-ui/icons/Menu';
 import IconButton from '@material-ui/core/IconButton';
-import IWindow from '../../utils/IWindow';
+import LanguageSelector from './LanguageSelector';
+import withTranslate, { WithTranslateProps } from '../../infrastructure/internationalization/hoc/WithTranslate';
+import Translations from '../../infrastructure/internationalization/Translations';
 
 const drawerWidth = 240;
 
@@ -53,6 +56,7 @@ const useStyles = makeStyles((theme: Theme) =>
         toolbar: theme.mixins.toolbar,
         drawerPaper: {
             width: drawerWidth,
+            // backgroundImage: `url(${ClothesImg})`,
             backgroundColor: 'rgba(34,45,58,1)',
         },
         content: {
@@ -79,6 +83,10 @@ const useStyles = makeStyles((theme: Theme) =>
         menuIcon: {
             color: 'rgba(184,199,206,1)',
         },
+        menuElement: {
+            display: 'flex',
+            justifyContent: 'center',
+        },
     })
 );
 
@@ -86,14 +94,14 @@ interface Props {
     children: JSX.Element;
 }
 
-const Sidebar: React.FC<Props> = (props: Props): JSX.Element => {
+const Sidebar: React.FC<Props & WithTranslateProps> = (props: Props & WithTranslateProps): JSX.Element => {
     const { window } = props;
     const classes = useStyles();
     const [mobileOpen, setMobileOpen] = React.useState(false);
 
     const routes = [
-        { label: 'Transakcja', link: '/transactions', icon: <AddBoxIcon className={classes.menuIcon} /> },
-        { label: 'Wyszukaj', link: '/search', icon: <SearchIcon className={classes.menuIcon} /> },
+        { label: props.translate(Translations.Sidebar.Transactions), link: '/transactions', icon: <AddBoxIcon className={classes.menuIcon} /> },
+        { label: props.translate(Translations.Sidebar.Search), link: '/search', icon: <SearchIcon className={classes.menuIcon} /> },
     ];
 
     const handleDrawerToggle = (open: boolean) => {
@@ -103,7 +111,7 @@ const Sidebar: React.FC<Props> = (props: Props): JSX.Element => {
     const drawer = (
         <div>
             <div role="presentation" className={`${classes.toolbar} ${classes.applogo}`} style={{ color: 'white' }}>
-                <Typography className={classes.applogo}>Babski kram</Typography>
+                <Typography className={classes.applogo}>Kram</Typography>
             </div>
             <Divider />
             <List>
@@ -133,18 +141,25 @@ const Sidebar: React.FC<Props> = (props: Props): JSX.Element => {
             <CssBaseline />
             <AppBar position="fixed" className={classes.appBar}>
                 <Toolbar disableGutters={false}>
-                    <IconButton
-                        color="inherit"
-                        aria-label="open drawer"
-                        edge="start"
-                        onClick={() => handleDrawerToggle(true)}
-                        className={`${classes.menuButton}`}
-                    >
-                        <MenuIcon />
-                    </IconButton>
+                    <Grid container justify="space-between">
+                        <Grid>
+                            <IconButton
+                                color="inherit"
+                                aria-label="open drawer"
+                                edge="start"
+                                onClick={() => handleDrawerToggle(true)}
+                                className={`${classes.menuButton}`}
+                            >
+                                <MenuIcon />
+                            </IconButton>
+                        </Grid>
+                        <Grid className={classes.menuElement}>
+                            <LanguageSelector />
+                        </Grid>
+                    </Grid>
                 </Toolbar>
             </AppBar>
-            <nav className={`${classes.drawer} ${classes.menuIcon}`} aria-label="mailbox folders">
+            <nav className={`${classes.drawer} ${classes.menuIcon}`}>
                 {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
                 <Hidden smUp implementation="css">
                     <Drawer
@@ -183,4 +198,4 @@ const Sidebar: React.FC<Props> = (props: Props): JSX.Element => {
     );
 };
 
-export default Sidebar;
+export default withTranslate(Sidebar);

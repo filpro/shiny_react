@@ -7,6 +7,8 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { createStyles, makeStyles, Theme, useTheme } from '@material-ui/core/styles';
 import { TableContainer, Table, TableBody, TableRow, TableCell, Grid } from '@material-ui/core';
+import withTranslate, { WithTranslateProps } from '../../../../infrastructure/internationalization/hoc/WithTranslate';
+import Translations from '../../../../infrastructure/internationalization/Translations';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -35,7 +37,7 @@ interface IProps {
     handleHasConfirmed(): void;
 }
 
-const TransactionConfirmation: React.FC<IProps> = (props: IProps): JSX.Element => {
+const TransactionConfirmation: React.FC<IProps & WithTranslateProps> = (props: IProps & WithTranslateProps): JSX.Element => {
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
     const classes = useStyles();
@@ -52,10 +54,16 @@ const TransactionConfirmation: React.FC<IProps> = (props: IProps): JSX.Element =
     const { FIRST_NAME, LAST_NAME } = props.clientSelected;
 
     const transactionInfo = [
-        { value: props.transactionDate === null ? '' : props.transactionDate.toLocaleDateString('pl-PL'), label: 'Data transakcji' },
-        { value: props.productId, label: 'ID produktu:' },
-        { value: props.clientSelected === null ? '' : `${FIRST_NAME} ${LAST_NAME}`, label: 'Nazwa klienta:' },
-        { value: props.productPrice, label: 'Cena:' },
+        {
+            value: props.transactionDate === null ? '' : props.transactionDate.toLocaleDateString('pl-PL'),
+            label: props.translate(Translations.NewTransaction.TransactionConfirmation.TransactionDate),
+        },
+        { value: props.productId, label: props.translate(Translations.NewTransaction.TransactionConfirmation.ProductName) },
+        {
+            value: props.clientSelected === null ? '' : `${FIRST_NAME} ${LAST_NAME}`,
+            label: props.translate(Translations.NewTransaction.TransactionConfirmation.CustomerName),
+        },
+        { value: props.productPrice, label: props.translate(Translations.NewTransaction.TransactionConfirmation.ProductPrice) },
     ];
 
     const transactionInfoTable: JSX.Element = (
@@ -82,18 +90,18 @@ const TransactionConfirmation: React.FC<IProps> = (props: IProps): JSX.Element =
 
     return (
         <Dialog fullScreen={fullScreen} open={props.open} onClose={handleClose} aria-labelledby="responsive-dialog-title" maxWidth="sm" fullWidth>
-            <DialogTitle id="responsive-dialog-title">Rejestracja transakcji</DialogTitle>
+            <DialogTitle id="responsive-dialog-title">{props.translate(Translations.NewTransaction.TransactionConfirmation.Title)}</DialogTitle>
             <DialogContent>{transactionInfoTable}</DialogContent>
             <DialogActions>
                 <Grid justify="space-between" container>
                     <Grid item>
                         <Button autoFocus onClick={handleClose} size="large" variant="outlined" color="secondary">
-                            Anuluję
+                            {props.translate(Translations.NewTransaction.TransactionConfirmation.Cancel)}
                         </Button>
                     </Grid>
                     <Grid item>
                         <Button onClick={handleConfirmed} color="primary" autoFocus size="large" variant="outlined">
-                            Potwierdzam
+                            {props.translate(Translations.NewTransaction.TransactionConfirmation.Confirm)}
                         </Button>
                     </Grid>
                 </Grid>
@@ -102,4 +110,4 @@ const TransactionConfirmation: React.FC<IProps> = (props: IProps): JSX.Element =
     );
 };
 
-export default TransactionConfirmation;
+export default withTranslate(TransactionConfirmation);
