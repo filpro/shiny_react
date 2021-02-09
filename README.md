@@ -9,3 +9,7 @@ Thanks to that client may easily call for data, as well as server can push infor
 This Readme will be extended with further details regarding configuration and deployment options. .
 
 Hope you will find it useful. 
+
+  <!-- badges: start -->
+  [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+  <!-- badges: end -->

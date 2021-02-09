@@ -1,12 +1,8 @@
 Package: kramShinyReact
-Title: An Amazing Shiny App
+Title: SHINY_REACT
 Version: 0.0.0.9000
-Authors@R: 
-    person(given = "Filip",
-           family = "Akkad",
-           role = c("aut", "cre"),
-           email = "filip.akkad@gmail.com")
-Description: What the package does (one paragraph).
+Authors@R: person('Filip', 'Akkad', email = 'filip.akkad@gmail.com', role = c('cre', 'aut'))
+Description: This a Shiny backend for an application with React as a frontend. This is specifically R Shiny using websocket & REST API for communication with React
 License: What license is it under?
 Imports: 
     config,
@@ -30,3 +26,5 @@ RoxygenNote: 7.1.1
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
+URL: https://github.com/filpro/shiny_react
+BugReports: https://github.com/filpro/shiny_react/issues
