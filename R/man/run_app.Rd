@@ -4,7 +4,7 @@
 \alias{run_app}
 \title{Run the Shiny Application}
 \usage{
-run_app(reactPagePath, ...)
+run_app(reactPagePath, mainJs, ...)
 }
 \arguments{
 \item{reactPagePath}{A path to React page managed by npm}

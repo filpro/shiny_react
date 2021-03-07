@@ -13,6 +13,7 @@ setId = function(vec = vector(), n, prefix, date_ref = Sys.Date()) {
 }
 
 #' @import DBI
+#' @import purrr
 appendTable = function(table_name, object, prefix = "", update_id = NA, to_upper = TRUE, user_name = NULL) {
   if(to_upper) object = dfToUpper(object)
   getTable(table_name, function(table, con) {

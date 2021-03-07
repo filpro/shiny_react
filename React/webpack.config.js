@@ -4,8 +4,8 @@ const path = require('path');
 module.exports = {
   output: {
     // Serve the bundle from /static
-    publicPath: '/static/',
-    path: path.join(__dirname, ''),
+    publicPath: '/www/',
+    path: path.join('/shiny_react/R/inst/app/www/'),
   },
   resolve: {
     extensions: ['.ts', '.tsx', '.js']
