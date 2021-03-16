@@ -42,6 +42,7 @@ const DateRange: React.FC<WithTranslateProps> = observer(
                             KeyboardButtonProps={{
                                 'aria-label': 'change date',
                             }}
+                            size="small"
                             fullWidth
                             inputVariant="outlined"
                         />
@@ -62,6 +63,7 @@ const DateRange: React.FC<WithTranslateProps> = observer(
                             KeyboardButtonProps={{
                                 'aria-label': 'change date',
                             }}
+                            size="small"
                             fullWidth
                             inputVariant="outlined"
                         />

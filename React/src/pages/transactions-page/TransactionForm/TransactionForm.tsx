@@ -57,7 +57,7 @@ const TransactionForm: React.FC<WithTranslateProps> = observer(
         };
 
         const handleConfirmation = () => {
-            if (customerStore.selectedCustomer) {
+            if (customerStore.selectedCustomer && !newTransactionStore.doesTransactionExistForProductName) {
                 setOpenConfirmationDialog(true);
             }
         };
@@ -82,7 +82,7 @@ const TransactionForm: React.FC<WithTranslateProps> = observer(
 
         return (
             <>
-                {customerStore.selectedCustomer ? (
+                {openConfirmationDialog ? (
                     <TransactionConfirmation
                         open={openConfirmationDialog}
                         setOpen={setOpenConfirmationDialog}

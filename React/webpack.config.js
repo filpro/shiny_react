@@ -5,7 +5,7 @@ module.exports = {
   output: {
     // Serve the bundle from /static
     publicPath: '/www/',
-    path: path.join('/shiny_react/R/inst/app/www/'),
+    path: path.join('/shiny_react/inst/app/www/'),
   },
   resolve: {
     extensions: ['.ts', '.tsx', '.js']

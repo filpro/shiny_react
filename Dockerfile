@@ -1,13 +1,14 @@
 FROM r-base
 RUN apt-get update && apt-get install -y  git-core libcurl4-openssl-dev libgit2-dev libicu-dev libmariadb-dev libssl-dev libxml2-dev make pandoc pandoc-citeproc && rm -rf /var/lib/apt/lists/*
-#RUN eecho "options(repos = c(CRAN = 'https://cran.rstudio.com/'), download.file.method = 'libcurl')" >> /usr/local/lib/R/etc/Rprofile.site
+#RUN echo "options(repos = c(CRAN = 'https://cran.rstudio.com/'), download.file.method = 'libcurl')" >> /usr/local/lib/R/etc/Rprofile.site
 RUN R -e 'install.packages("remotes")'
-RUN R -e 'remotes::install_github("r-lib/remotes", ref = "97bbf81")'
+#RUN R -e 'remotes::install_github("r-lib/remotes", ref = "97bbf81")'
 RUN Rscript -e 'remotes::install_version("magrittr",upgrade="never", version = "2.0.1")'
 RUN Rscript -e 'remotes::install_version("processx",upgrade="never", version = "3.4.5")'
 RUN Rscript -e 'remotes::install_version("purrr",upgrade="never", version = "0.3.4")'
 RUN Rscript -e 'remotes::install_version("jsonlite",upgrade="never", version = "1.7.2")'
 RUN Rscript -e 'remotes::install_version("promises",upgrade="never", version = "1.1.1")'
+RUN Rscript -e 'remotes::install_version("pkgload",upgrade="never", version = "1.1.0")'
 RUN Rscript -e 'remotes::install_version("dplyr",upgrade="never", version = "1.0.4")'
 RUN Rscript -e 'remotes::install_version("DBI",upgrade="never", version = "1.1.1")'
 RUN Rscript -e 'remotes::install_version("testthat",upgrade="never", version = "3.0.1")'

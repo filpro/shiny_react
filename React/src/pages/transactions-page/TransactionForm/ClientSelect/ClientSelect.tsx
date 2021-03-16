@@ -3,7 +3,9 @@ import React, { useContext } from 'react';
 import { observer } from 'mobx-react';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import { Button, CircularProgress, Typography, createStyles, makeStyles } from '@material-ui/core';
+import { Button, CircularProgress, createStyles, makeStyles } from '@material-ui/core';
+import parse from 'autosuggest-highlight/parse';
+import match from 'autosuggest-highlight/match';
 import ClientAdder from './ClientAdder/ClientAdder';
 import Customer from '../../../../models/Customer';
 import CustomerStore from '../../../../stores/Customer.Store';
@@ -16,6 +18,13 @@ const useStyles = makeStyles(() =>
             fontWeight: 300,
             fontSize: '0.9rem',
             lineHeight: 1,
+        },
+        listbox: {
+            padding: 0,
+        },
+        option: {
+            minHeight: '25px',
+            height: '25px',
         },
     })
 );
@@ -64,6 +73,12 @@ const ClientSelect: React.FC<IProps & WithTranslateProps> = observer(
             <>
                 <ClientAdder open={open} setOpen={setOpen} addNewCustomer={addNew} />
                 <Autocomplete
+                    debug
+                    blurOnSelect
+                    classes={{
+                        option: classes.option,
+                        listbox: classes.listbox,
+                    }}
                     id="combo-box-demo"
                     options={getSortedCustomers(customerStore.allCustomers) || []}
                     getOptionLabel={(option) => (option === null ? '' : `${option.FIRST_NAME} ${option.LAST_NAME}`)}
@@ -75,10 +90,18 @@ const ClientSelect: React.FC<IProps & WithTranslateProps> = observer(
                         <TextField {...params} label={props.translate(Translations.NewTransaction.ClientName)} fullWidth variant="outlined" required />
                     )}
                     renderOption={(option) => {
+                        const text = `${option.FIRST_NAME} ${option.LAST_NAME}`;
+                        const matches = match(text, inputValue);
+                        const parts: { text: string; highlight: boolean }[] = parse(text, matches);
                         return (
-                            <>
-                                <Typography className={classes.mainItemPart}>{`${option.FIRST_NAME} ${option.LAST_NAME}`}</Typography>
-                            </>
+                            <div>
+                                {parts.map((part, index: number) => (
+                                    // eslint-disable-next-line react/no-array-index-key
+                                    <span key={index} style={{ height: 25, fontWeight: part.highlight ? 700 : 350 }}>
+                                        {part.text}
+                                    </span>
+                                ))}
+                            </div>
                         );
                     }}
                     noOptionsText={
@@ -90,9 +113,9 @@ const ClientSelect: React.FC<IProps & WithTranslateProps> = observer(
                     }
                     ListboxProps={{
                         style: {
-                            maxHeight: '150px',
-                            border: '0.5px solid black',
-                            fontSize: 'small',
+                            maxHeight: '200px',
+                            border: '0.5px solid lightgrey',
+                            borderRadius: '8px',
                         },
                     }}
                 />

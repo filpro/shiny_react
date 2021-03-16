@@ -1,0 +1,6 @@
+renv/library/
+renv/lock/
+renv/python/
+renv/staging/
+React/
+.Rprofile

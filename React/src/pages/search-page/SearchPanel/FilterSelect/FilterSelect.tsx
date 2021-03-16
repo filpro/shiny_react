@@ -1,7 +1,7 @@
-import { TextField, useTheme } from '@material-ui/core';
+import { createStyles, makeStyles, TextField, Theme, useTheme } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
 import { observer } from 'mobx-react';
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { VariableSizeList as List, ListChildComponentProps } from 'react-window';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
@@ -17,6 +17,21 @@ interface IProps<T> {
     changeHandler(value: T[] | [], reason: string): void;
     filter: T[] | undefined;
 }
+
+const useStyles = makeStyles((theme: Theme) =>
+    createStyles({
+        listbox: {
+            padding: 0,
+        },
+        option: {
+            minHeight: '0px',
+        },
+        backdrop: {
+            zIndex: theme.zIndex.drawer + 1,
+            color: '#fff',
+        },
+    })
+);
 
 function renderRow(props: ListChildComponentProps) {
     const { data, index, style } = props;
@@ -34,20 +49,20 @@ const OuterElementType = React.forwardRef<HTMLDivElement>((props, ref) => {
     return <div ref={ref} {...props} {...outerProps} />;
 });
 
-const LISTBOX_PADDING = 8;
+const LISTBOX_PADDING = 10;
 
 const ListboxComponent = React.forwardRef<HTMLDivElement>(
     (props, ref): JSX.Element => {
         const { children, ...other } = props;
         const theme = useTheme();
         const smUp = useMediaQuery(theme.breakpoints.up('sm'), { noSsr: true });
-        const itemSize = smUp ? 36 : 48;
+        const itemSize = smUp ? 25 : 25;
         const itemData = React.Children.toArray(children);
         const itemCount = itemData.length;
 
         const getChildSize = (child: React.ReactNode) => {
             if (React.isValidElement(child) && child.type === ListSubheader) {
-                return 48;
+                return 25;
             }
             return itemSize;
         };
@@ -68,9 +83,14 @@ const ListboxComponent = React.forwardRef<HTMLDivElement>(
                         itemSize={(index) => getChildSize(itemData[index])}
                         itemData={itemData}
                         width="100%"
-                        overscanCount={5}
+                        overscanCount={1}
                         outerElementType={OuterElementType}
                         innerElementType="ul"
+                        style={{
+                            border: '0.5px solid lightgrey',
+                            borderRadius: '8px',
+                            backgroundColor: 'white',
+                        }}
                     >
                         {renderRow}
                     </List>
@@ -85,9 +105,19 @@ const ListboxComponent = React.forwardRef<HTMLDivElement>(
 const FilterSelect = observer(
     <T,>(props: IProps<T> & WithTranslateProps): JSX.Element => {
         const inspectTransactionsStore = useContext(InspectTransactionStore);
+        const classes = useStyles();
 
+        const [open, setOpen] = useState(false);
         const changeHandler = (value: T[] | [], reason: string) => {
             props.changeHandler(value, reason);
+        };
+
+        const openHandler = () => {
+            setOpen(true);
+        };
+
+        const closeHandler = () => {
+            setOpen(false);
         };
 
         return inspectTransactionsStore.serverFilteredCustomers === null ? (
@@ -95,6 +125,15 @@ const FilterSelect = observer(
         ) : (
             <>
                 <Autocomplete
+                    open={open}
+                    blurOnSelect
+                    onOpen={openHandler}
+                    onClose={closeHandler}
+                    classes={{
+                        option: classes.option,
+                        listbox: classes.listbox,
+                    }}
+                    size="small"
                     id="combo-box-demo"
                     multiple
                     filterSelectedOptions

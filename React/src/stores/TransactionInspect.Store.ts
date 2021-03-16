@@ -14,7 +14,7 @@ interface ITransactionStore {
     localFilteredCustomers?: Customer[];
     serverFilteredProducts?: Product[];
     localFilteredProducts?: Product[];
-    localFilteredDates?: Date[];
+    localFilteredDates?: string[];
     dateFrom: Date;
     setDateFrom(dateFrom: Date | null): void;
     dateTo: Date;
@@ -180,23 +180,24 @@ export class TransactionController implements ITransactionStore, IObserver {
     updateDatesDropdownList = (): void => {
         const isValidCustomerFilter = this.customerIdsFilter !== undefined && this.customerIdsFilter !== null && this.customerIdsFilter.length !== 0;
         const isValidProductFilter = this.productIdsFilter !== undefined && this.productIdsFilter !== null && this.productIdsFilter.length !== 0;
+        let tempLocalFilteredDates: string[] | undefined = [];
 
         if (isValidCustomerFilter || isValidProductFilter) {
-            this.localFilteredDates = this.serverFilteredTransactions
+            tempLocalFilteredDates = this.serverFilteredTransactions
                 ?.filter(
                     (transaction) =>
                         (isValidCustomerFilter ? this.customerIdsFilter?.map((customer) => customer.ID).includes(transaction.CUSTOMER_ID) : true) &&
                         (isValidProductFilter ? this.productIdsFilter?.map((product) => product.ID).includes(transaction.PRODUCT_ID) : true)
                 )
-                .map((transaction) => transaction.TRANSMISSION_ID)
+                .map((transaction) => transaction.TRANSMISSION_ID.toString())
                 .filter((x, i, a) => a.indexOf(x) === i);
         } else {
-            this.localFilteredDates = this.serverFilteredTransactions
-                ?.map((transaction) => transaction.TRANSMISSION_ID)
+            tempLocalFilteredDates = this.serverFilteredTransactions
+                ?.map((transaction) => transaction.TRANSMISSION_ID.toString())
                 .filter((x, i, a) => a.indexOf(x) === i);
         }
 
-        this.localFilteredDates = this.localFilteredDates?.sort((date1, date2) => (date1 > date2 ? 1 : -1));
+        this.localFilteredDates = tempLocalFilteredDates?.sort((date1, date2) => Date.parse(date2) - Date.parse(date1));
     };
 
     getLocalFilteredCustomerById = (id: string): Customer | undefined => {
@@ -219,7 +220,7 @@ export class TransactionController implements ITransactionStore, IObserver {
 
     localFilteredProducts?: Product[];
 
-    localFilteredDates?: Date[];
+    localFilteredDates?: string[];
 
     dateFrom!: Date;
 

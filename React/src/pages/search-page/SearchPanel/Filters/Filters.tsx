@@ -1,20 +1,24 @@
 import React, { useContext } from 'react';
 import { observer } from 'mobx-react';
-import { makeStyles, createStyles, Grid, Divider } from '@material-ui/core';
+import { makeStyles, createStyles, Grid, Typography } from '@material-ui/core';
+import parse from 'autosuggest-highlight/parse';
+import match from 'autosuggest-highlight/match';
 import Customer from '../../../../models/Customer';
 import Product from '../../../../models/Product';
 import FilterSelect from '../FilterSelect/FilterSelect';
 import DateRange from '../DateRange/DateRange';
 import withTranslate, { WithTranslateProps } from '../../../../infrastructure/internationalization/hoc/WithTranslate';
 import Translations from '../../../../infrastructure/internationalization/Translations';
-
+import dateDiffInDays from '../../../../utils/DateDiffInDays';
 import InspectTransactionStore from '../../../../stores/TransactionInspect.Store';
 
 const useStyles = makeStyles(() =>
     createStyles({
-        text: {
-            flexGrow: 1,
-            fontSize: 'small',
+        mainItemPart: {
+            fontWeight: 300,
+        },
+        subtitleItemPart: {
+            fontWeight: 200,
         },
     })
 );
@@ -23,6 +27,13 @@ const Filters = observer(
     (props: WithTranslateProps): JSX.Element => {
         const inspectTransactionsStore = useContext(InspectTransactionStore);
         const classes = useStyles();
+
+        const intervalMessage = (date1: any, date2: any) => {
+            const result = dateDiffInDays(date1, date2);
+            // eslint-disable-next-line no-nested-ternary
+            const resultText = result === 0 ? 'dzisiaj' : result === 1 ? 'wczoraj' : result === 2 ? 'przedwczoraj' : `${result} dni temu`;
+            return resultText;
+        };
 
         return (
             <Grid container>
@@ -37,12 +48,16 @@ const Filters = observer(
                         optionLabel={(option: Date) => (option === null ? '' : `${option}`)}
                         renderOption={(option) => {
                             return (
-                                <>
-                                    <div className={classes.text}>
-                                        {`${option}`}
-                                        <Divider />
-                                    </div>
-                                </>
+                                <Grid container justify="space-between">
+                                    <Grid>
+                                        <Typography className={classes.mainItemPart}>{`${option}`}</Typography>
+                                    </Grid>
+                                    <Grid>
+                                        <Typography  className={classes.subtitleItemPart} variant="caption" display="block" gutterBottom>
+                                            {`(${intervalMessage(option, Date())})`}
+                                        </Typography>
+                                    </Grid>
+                                </Grid>
                             );
                         }}
                         changeHandler={inspectTransactionsStore.setTransmissionDatesFilter}
@@ -54,14 +69,19 @@ const Filters = observer(
                         options={inspectTransactionsStore.localFilteredCustomers}
                         filter={inspectTransactionsStore.customerIdsFilter}
                         optionLabel={(option: Customer) => (option === null ? '' : `${option.FIRST_NAME} ${option.LAST_NAME}`)}
-                        renderOption={(option) => {
+                        renderOption={(option: Customer, { inputValue }) => {
+                            const text = `${option.FIRST_NAME} ${option.LAST_NAME}`;
+                            const matches = match(text, inputValue);
+                            const parts: { text: string; highlight: boolean }[] = parse(text, matches);
                             return (
-                                <>
-                                    <div className={classes.text}>
-                                        {`${option.FIRST_NAME} ${option.LAST_NAME}`}
-                                        <Divider />
-                                    </div>
-                                </>
+                                <div>
+                                    {parts.map((part, index: number) => (
+                                        // eslint-disable-next-line react/no-array-index-key
+                                        <span key={index} style={{ fontWeight: part.highlight ? 700 : 350 }}>
+                                            {part.text}
+                                        </span>
+                                    ))}
+                                </div>
                             );
                         }}
                         changeHandler={inspectTransactionsStore.setCustomerIdsFilter}
@@ -76,10 +96,7 @@ const Filters = observer(
                         renderOption={(option) => {
                             return (
                                 <>
-                                    <div className={classes.text}>
-                                        {`${option.PRODUCT_NAME}`}
-                                        <Divider />
-                                    </div>
+                                    <Typography className={classes.mainItemPart}>{`${option.PRODUCT_NAME}`}</Typography>
                                 </>
                             );
                         }}

@@ -7,10 +7,11 @@ import RemoveShoppingCart from '@material-ui/icons/RemoveShoppingCart';
 import AttachMoney from '@material-ui/icons/AttachMoney';
 import MoneyOff from '@material-ui/icons/MoneyOff';
 import InspectTransactionStore from '../../../../stores/TransactionInspect.Store';
-import withTranslate, { WithTranslateProps } from '../../../../infrastructure/internationalization/hoc/WithTranslate';
+import withTranslate from '../../../../infrastructure/internationalization/hoc/WithTranslate';
 import Translations from '../../../../infrastructure/internationalization/Translations';
 import ItemMenu, { useItemIconStyles } from './ItemMenu';
 import DeleteConfirmation from './DeleteConfirmation';
+import dateDiffInDays from '../../../../utils/DateDiffInDays';
 
 const useItemStyles = makeStyles(() =>
     createStyles({
@@ -79,6 +80,13 @@ const Row = observer(
             handleClose();
         };
 
+        const intervalMessage = (date1: any, date2: any) => {
+            const result = dateDiffInDays(date1, date2);
+            // eslint-disable-next-line no-nested-ternary
+            const resultText = result === 0 ? 'dzisiaj' : result === 1 ? 'wczoraj' : result === 2 ? 'przedwczoraj' : `${result} dni temu`;
+            return resultText;
+        };
+
         const statusProperties = {
             payment: [
                 {
@@ -139,14 +147,15 @@ const Row = observer(
                                     <MoreVertIcon />
                                 </IconButton>
                             }
-                            title={`${product?.PRODUCT_NAME}`}
-                            subheader={`${transaction.TRANSMISSION_ID}`}
+                            title={`${transaction.TRANSMISSION_ID}`}
+                            subheader={`${intervalMessage(transaction.TRANSMISSION_ID, Date())}`}
                             key={index}
                         />
                         <CardContent>
                             <Grid container direction="row" justify="space-between">
                                 <Grid item className={classes.textCardGrid}>
-                                    <Typography color="textSecondary" noWrap>{`${customer?.FIRST_NAME} ${customer?.LAST_NAME}`}</Typography>
+                                    <Typography color="textPrimary" noWrap variant="h4">{`${product?.PRODUCT_NAME}`}</Typography>
+                                    <Typography color="textPrimary" variant="h6" noWrap>{`${customer?.FIRST_NAME} ${customer?.LAST_NAME}`}</Typography>
                                     <Typography color="textSecondary">
                                         {new Intl.NumberFormat('pl-PL', { style: 'currency', currency: 'PLN' }).format(transaction.PRODUCT_PRICE)}
                                     </Typography>

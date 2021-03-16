@@ -9,9 +9,9 @@ const ItemList = observer(
         const inspectTransactionsStore = useContext(InspectTransactionStore);
         const items = inspectTransactionsStore.localFilteredTransactions;
         const itemCount = items ? items.length : 0;
-        const itemSize = 200;
+        const itemSize = 230;
         return inspectTransactionsStore.localFilteredTransactions !== undefined ? (
-            <List height={Math.min(500, itemCount * itemSize)} itemCount={itemCount} itemSize={200} itemData={items} width="100%">
+            <List height={Math.min(500, itemCount * itemSize)} itemCount={itemCount} itemSize={itemSize} itemData={items} width="100%">
                 {Row}
             </List>
         ) : (

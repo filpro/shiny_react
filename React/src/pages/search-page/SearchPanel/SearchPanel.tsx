@@ -5,6 +5,9 @@ import Accordion from '@material-ui/core/Accordion';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import FilterListIcon from '@material-ui/icons/FilterList';
+import ListIcon from '@material-ui/icons/List';
+import DataUsageIcon from '@material-ui/icons/DataUsage';
 import ItemList from './ItemList/ItemList';
 import withTranslate, { WithTranslateProps } from '../../../infrastructure/internationalization/hoc/WithTranslate';
 import Translations from '../../../infrastructure/internationalization/Translations';
@@ -28,6 +31,10 @@ const useStyles = makeStyles((theme: Theme) =>
             fontWeight: theme.typography.fontWeightRegular,
             // flexBasis: '70%',
             flexShrink: 0,
+            display: 'flex',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            paddingLeft: '5px',
         },
         secondaryHeading: {
             fontSize: theme.typography.pxToRem(15),
@@ -39,6 +46,14 @@ const useStyles = makeStyles((theme: Theme) =>
         },
         loadStatus: {
             verticalAlign: 'middle',
+        },
+        filterTitle: {
+            display: 'flex',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+        },
+        filterIcon: {
+            fontSize: '20px',
         },
     })
 );
@@ -60,10 +75,13 @@ const SearchPanel: React.FC<WithTranslateProps> = observer(
                             justify="space-between" // Add it here :)
                             container
                         >
-                            <Grid item>
-                                <Typography className={classes.heading}>{`${props.translate(Translations.SearchTransaction.Filters.Filters)} ${
-                                    noOfFiltersApplied > 0 ? ` (${noOfFiltersApplied})` : ''
-                                }`}</Typography>
+                            <Grid item className={classes.filterTitle}>
+                                <FilterListIcon className={classes.filterIcon} />
+                                <Typography className={classes.heading}>
+                                    {`${props.translate(Translations.SearchTransaction.Filters.Filters)} ${
+                                        noOfFiltersApplied > 0 ? ` (${noOfFiltersApplied})` : ''
+                                    }`}
+                                </Typography>
                             </Grid>
                             <Grid item>
                                 {inspectTransactionsStore.isLoading ? (
@@ -83,7 +101,8 @@ const SearchPanel: React.FC<WithTranslateProps> = observer(
                     </AccordionDetails>
                 </Accordion>
                 <Accordion elevation={4} className={`${classes.root}`}>
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    <AccordionSummary className={classes.filterTitle} expandIcon={<ExpandMoreIcon />}>
+                        <DataUsageIcon className={classes.filterIcon} />
                         <Typography className={classes.heading}>{props.translate(Translations.SearchTransaction.Summary.Summary)}</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
@@ -96,7 +115,8 @@ const SearchPanel: React.FC<WithTranslateProps> = observer(
                             justify="space-between" // Add it here :)
                             container
                         >
-                            <Grid item>
+                            <Grid item className={classes.filterTitle}>
+                                <ListIcon className={classes.filterIcon} />
                                 <Typography className={classes.heading}>
                                     {props.translate(Translations.SearchTransaction.TransactionsList.TransactionsList)}
                                 </Typography>

@@ -58,9 +58,9 @@ const Translations = {
         TransactionsList: {
             TransactionsList: { pl: 'LISTA TRANSAKCJI', en: 'LIST OF TRANSACTIONS' },
             MarkAs: { pl: 'Oznacz jako', en: 'Mark as' },
-            Sent: { pl: 'wysłane', en: 'sent' },
-            Unsent: { pl: 'niewysłane', en: 'not sent' },
-            Paid: { pl: 'opłaone', en: 'paid' },
+            Sent: { pl: 'spakowane', en: 'sent' },
+            Unsent: { pl: 'niespakowane', en: 'not sent' },
+            Paid: { pl: 'opłacone', en: 'paid' },
             Unpaid: { pl: 'nieopłacone', en: 'not paid' },
             Delete: { pl: 'usuń', en: 'delete' },
             DeleteConfirmation: {

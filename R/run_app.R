@@ -16,7 +16,7 @@ run_app <- function(
       ui = app_ui, 
       server = app_server,
       options = list(      host = "0.0.0.0",
-      port = 3000)
+      port = 3838)
     ), 
     golem_opts = list(...)
   )
