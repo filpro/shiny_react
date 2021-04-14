@@ -10,7 +10,7 @@ openCloseConnection = function() {
     con = DBI::dbConnect(
       drv = RMariaDB::MariaDB(),
       dbname = "babski_kram_test",
-      host = "192.168.0.88",
+      host = "192.168.0.199",
       username = "root",
       password = "root"
     )    
