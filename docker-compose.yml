@@ -1,0 +1,5 @@
+version: '3'
+services:
+  babski_kram:
+    build: .
+    image: babski_kram_image

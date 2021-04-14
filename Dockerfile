@@ -12,7 +12,7 @@ RUN Rscript -e 'remotes::install_version("pkgload",upgrade="never", version = "1
 RUN Rscript -e 'remotes::install_version("dplyr",upgrade="never", version = "1.0.4")'
 RUN Rscript -e 'remotes::install_version("DBI",upgrade="never", version = "1.1.1")'
 RUN Rscript -e 'remotes::install_version("testthat",upgrade="never", version = "3.0.1")'
-RUN Rscript -e 'remotes::install_version("shiny",upgrade="never", version = "1.5.0")'
+RUN Rscript -e 'remotes::install_version("shiny",upgrade="never", version = "1.6.0")'
 RUN Rscript -e 'remotes::install_version("config",upgrade="never", version = "0.3.1")'
 RUN Rscript -e 'remotes::install_version("future",upgrade="never", version = "1.21.0")'
 RUN Rscript -e 'remotes::install_version("dbplyr",upgrade="never", version = "2.1.0")'

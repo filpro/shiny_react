@@ -4,7 +4,7 @@ const path = require('path');
 module.exports = {
   output: {
     // Serve the bundle from /static
-    publicPath: '/www/',
+    publicPath: '/app_direct/babski-kram/www/',
     path: path.join('/shiny_react/inst/app/www/'),
   },
   resolve: {
