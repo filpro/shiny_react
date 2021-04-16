@@ -3,6 +3,7 @@ import './App.css';
 import { hot } from 'react-hot-loader';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { observer } from 'mobx-react';
+import { useAuth0 } from '@auth0/auth0-react';
 import AppRouter from './components/Router/AppRouter';
 import Sidebar from './components/Sidebar/Sidebar';
 import CustomerService, { CustomerApi } from './services/CustomerService';
@@ -23,6 +24,29 @@ const App: React.FC = observer(
         const [isShinyConnected, setIsShinyConnected] = useState(false);
         const [progress, setProgress] = useState(0);
 
+        const { isLoading, loginWithRedirect, isAuthenticated, user } = useAuth0();
+
+        useEffect(() => {
+            (async function login() {
+                if (!isLoading && !user) {
+                    await loginWithRedirect();
+                }
+            })();
+        }, [isLoading]);
+        
+        useEffect(() => {
+            $(document).on('shiny:connected', () => {
+                setIsShinyConnected(true);                
+                console.log(`Session initialized: ${Date()}`);
+            });
+        });
+
+        useEffect(() => {
+            if(!isLoading && isAuthenticated && isShinyConnected) {
+                window.Shiny.setInputValue('is_authenticated', isAuthenticated);
+            }
+        })
+
         useEffect(() => {
             window.Shiny.addCustomMessageHandler<CustomerApi>('customerApi', (urls: CustomerApi) => {
                 CustomerService.setApiUrl(urls);
@@ -39,11 +63,6 @@ const App: React.FC = observer(
                 setIsProductApiLoaded(true);
             });
 
-            $(document).on('shiny:connected', () => {
-                setIsShinyConnected(true);
-                console.log(`Session initialized: ${Date()}`);
-            });
-
             const loadChecker: boolean[] = [isShinyConnected, isCustomerApiLoaded, isTransactionApiLoaded, isProductApiLoaded];
             if (loadChecker.every((check: boolean) => check)) {
                 setIsInitialized(true);
@@ -52,14 +71,14 @@ const App: React.FC = observer(
             setProgress((loadChecker.filter((x) => x).length / loadChecker.length) * 100);
         }, [isShinyConnected, isCustomerApiLoaded, isTransactionApiLoaded, isProductApiLoaded]);
 
-        const appContent: JSX.Element = (
+        const appContent = (
             <header className="App-header">
                 <UpdateTrigger />
                 <Sidebar>{isInitialized ? <AppRouter /> : <LinearProgress variant="determinate" value={progress} />}</Sidebar>
             </header>
         );
 
-        return <div className="App">{appContent}</div>;
+        return <div className="App">{isAuthenticated ? appContent : <div>LOADING</div>} </div>;
     }
 );
 

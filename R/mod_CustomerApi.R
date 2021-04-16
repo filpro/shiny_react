@@ -3,7 +3,7 @@
 #' @noRd 
 #' @import jsonlite
 #' @import dplyr
-mod_CustomerApi_server <- function(input, output, session){
+mod_CustomerApi_server <- function(input, output, session, is_authenticated){
       customerApiAddNew = session$registerDataObj(
         name = 'customer-api-add-new',
         data = list(),
@@ -42,12 +42,15 @@ mod_CustomerApi_server <- function(input, output, session){
             }
         )
 
-
-    session$sendCustomMessage('customerApi', list(
-        customerApiAddNew = customerApiAddNew,
-        customerApiGetAll = customerApiGetAll,
-        customerApiGetById = customerApiGetById
-    ))
+    observeEvent(is_authenticated(), {
+        if(is_authenticated()) {
+            session$sendCustomMessage('customerApi', list(
+                customerApiAddNew = customerApiAddNew,
+                customerApiGetAll = customerApiGetAll,
+                customerApiGetById = customerApiGetById
+            ))
+        }
+    })
 }
     
 ## To be copied in the UI

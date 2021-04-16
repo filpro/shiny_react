@@ -19,9 +19,11 @@ dataUpdateTrigger = reactiveVal(0);
 
 app_server <- function( input, output, session ) {
   # List the first level callModules here
-  callModule(mod_Heartbeat_server, "Heartbeat")
-  callModule(mod_TransactionApi_server, "TransactionApi")
-  callModule(mod_CustomerApi_server, "CustomerApi")
-  callModule(mod_ProductApi_server, "ProductApi")
+  is_authenticated = reactiveVal(FALSE)
+  observeEvent(input$is_authenticated, is_authenticated(input$is_authenticated))
 
+  callModule(mod_Heartbeat_server, "Heartbeat")
+  callModule(mod_TransactionApi_server, "TransactionApi", is_authenticated)
+  callModule(mod_CustomerApi_server, "CustomerApi", is_authenticated)
+  callModule(mod_ProductApi_server, "ProductApi", is_authenticated)
 }

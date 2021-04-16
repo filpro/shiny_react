@@ -5,7 +5,7 @@
 #' @import dplyr
 #' @import future
 #' @import promises
-mod_ProductApi_server <- function(input, output, session){
+mod_ProductApi_server <- function(input, output, session, is_authenticated){
       productApiAddNew = session$registerDataObj(
         name = 'product-api-add-new',
         data = list(),
@@ -33,10 +33,16 @@ mod_ProductApi_server <- function(input, output, session){
 
     )
 
-    session$sendCustomMessage('productApi', list(
-        productApiAddNew = productApiAddNew,
-        productApiCheckIfExistsTransaction = productApiCheckIfExistsTransaction
-    ))
+
+
+    observeEvent(is_authenticated(), {
+        if(is_authenticated()) {
+            session$sendCustomMessage('productApi', list(
+                productApiAddNew = productApiAddNew,
+                productApiCheckIfExistsTransaction = productApiCheckIfExistsTransaction
+            ))
+        }
+    })
 
  
 }

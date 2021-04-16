@@ -3,7 +3,7 @@
 #' @noRd 
 #' @import jsonlite
 #' @import dplyr
-mod_TransactionApi_server <- function(input, output, session){
+mod_TransactionApi_server <- function(input, output, session, is_authenticated){
       transactionApiAddNew = session$registerDataObj(
         name = 'transaction-api-add-new',
         data = list(),
@@ -121,13 +121,19 @@ mod_TransactionApi_server <- function(input, output, session){
         session$sendCustomMessage('refreshDataTrigger',dataUpdateTrigger())
     }, ignoreInit=TRUE)
 
-    session$sendCustomMessage('transactionApi', list(
-        transactionApiAddNew = transactionApiAddNew,
-        transactionApiGetAll = transactionApiGetAll,
-        transactionApiGetByDates = transactionApiGetByDates,
-        transactionApiUpdate = transactionApiUpdate,
-        transactionApiDelete = transactionApiDelete
-    ))
+
+
+    observeEvent(is_authenticated(), {
+        if(is_authenticated()) {
+            session$sendCustomMessage('transactionApi', list(
+                transactionApiAddNew = transactionApiAddNew,
+                transactionApiGetAll = transactionApiGetAll,
+                transactionApiGetByDates = transactionApiGetByDates,
+                transactionApiUpdate = transactionApiUpdate,
+                transactionApiDelete = transactionApiDelete
+            ))
+        }
+    })
 
  
 }

@@ -20,6 +20,7 @@ import IconButton from '@material-ui/core/IconButton';
 import LanguageSelector from './LanguageSelector';
 import withTranslate, { WithTranslateProps } from '../../infrastructure/internationalization/hoc/WithTranslate';
 import Translations from '../../infrastructure/internationalization/Translations';
+import LoginButton from '../../auth/LoginButton';
 
 const drawerWidth = 240;
 
